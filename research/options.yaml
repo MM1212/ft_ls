@@ -1,0 +1,228 @@
+properties:
+  filter:
+    all:
+      args: -a, --all
+      description: 'In directories, do not ignore file names that start with ‘.’.'
+      notes: N/A
+      done: false
+    almost_all:
+      args: -A, --almost-all
+      description: In directories, do not ignore all file names that start with ‘.’; ignore only . and ... The --all (-a) option overrides this option.
+      notes: '#all overrides this option.'
+    ignore_backups:
+      args: -B, --ignore-backups
+      description: In directories, ignore files that end with ‘~’. This option is equivalent to ‘--ignore='*~' --ignore='.*~'’.
+      notes: N/A
+      synonyms: [--ignore='*~', --ignore='.*~']
+    list_directories:
+      args: -d, --list-directories
+      description: List just the names of directories, as with other types of files, rather than listing their contents.
+      notes: 'Do not follow symbolic links listed on the command line unless #dereference_links_cli or #dereference_links options are specified.'
+    dereference_links_cli:
+      args: -H, --dereference-command-line
+      description: If a command line argument specifies a symbolic link, show information for the file the link references rather than for the link itself.
+    dereference_links:
+      args: -L, --dereference
+      description: When showing file information for a symbolic link, show information for the file the link references rather than the link itself. However, even with this option, ls still prints the name of the link itself, not the name of the file that the link points to.
+    recursive:
+      args: -R, --recursive
+      description: List the contents of directories recursively. When a symbolic link to a directory is encountered, ls will traverse the directory only if the symbolic link is encountered on the command line or ls is operating in long format.
+  display:
+    author:
+      args: --author
+      description: In long format, list each file’s author. In GNU/Hurd, file authors can differ from their owners, but in other operating systems the two are the same.
+    full_time:
+      args: --full-time
+      description: Produce long format, and list times in full. It is equivalent to using --format=long (-l) with --time-style=full-iso
+      aliases: [["#long_format", "#time_style == full-iso"]]
+    omit_owner:
+      args: -g
+      description: Produce long format, but omit owner information.
+      notes: "turn on #long_format"
+    omit_group:
+      args: -G, --no-group
+      description: Inhibit display of group information in long format. (This is the default in some non-GNU versions of ls, so we provide this option for compatibility.)
+    human_readable:
+      args: -h, --human-readable
+      description: Append a size letter to each size, such as ‘M’ for mebibytes. Powers of 1024 are used, not 1000; ‘M’ stands for 1,048,576 bytes. This option is equivalent to --block-size=human-readable.
+      notes: "#block_size = HUMAN_READABLE"
+    inode:
+      args: -i, --inode
+      description: Print the inode number (also called the file serial number and index number) of each file to the left of the file name. (This number uniquely identifies each file within a particular file system.)
+    long_format:
+      args: -l, --format=long, --format=verbose
+      description: "https://www.gnu.org/software/coreutils/manual/html_node/What-information-is-listed.html#index-_002dl-7"
+      notes: "#format = long"
+    numeric_ids:
+      args: -n, --numeric-uid-gid
+      description: Produce long format, but display right-justified numeric user and group IDs instead of left-justified owner and group names.
+    long_omit_group:
+      args: -o
+      description: Produce long format, but omit group information.
+      notes:
+        - It is equivalent to using --format=long (-l) with --no-group (-G).
+      aliases: ["#long_format", "#omit_group"]
+    size:
+      args: -s, --size
+      description: Print the allocated size of each file, in blocks.
+    si:
+      args: --si
+      description: Append a size letter to each size, such as ‘M’ for megabytes. Powers of 1000 are used, not 1024; ‘M’ stands for 1,000,000 bytes.
+      notes: "#block_size = SI"
+    time:
+      args: --time
+      options:
+        - [atime, access, use]
+        - [ctime, status]
+        - [birth, creation]
+      description: "https://www.gnu.org/software/coreutils/manual/html_node/Sorting-the-output.html"
+    time_ctime:
+      args: --time=ctime, -c
+      description: With long format, display the file’s last status change time.
+      notes: "#time = STATUS_CHANGED"
+    time_atime:
+      args: --time=atime, --time=access, --time=use, -u
+      description: With long format, display the file’s last access time.
+      notes: "#time = ACCESSED"
+    time_mtime:
+      args: --time=mtime, --time=modification
+      description: With long format, display the file’s last modification time.
+      notes: "#time = MODIFIED"
+    time_birth:
+      args: --time=birth, --time=creation
+      description: With long format, display the file’s birth time, if available.
+      notes: "#time = CREATED"
+    color:
+      args: --color
+      options:
+        - [always, yes, force]
+        - [never, no, none]
+        - [auto, tty, if-tty]
+      description: Colorize the output. The colorization is done via the LS_COLORS environment variable.
+      notes: "https://www.gnu.org/software/coreutils/manual/html_node/General-output-formatting.html#index-_002d_002dcolor"
+  sort:
+    sort:
+      args: --sort
+      options:
+        - none
+        - time
+        - size
+        - version
+        - width
+    unsorted_mix:
+      args: -f
+      description: Produce an unsorted directory listing. This is equivalent to the combination of --all (-a), --sort=none (-U), -1, --color=none, and --hyperlink=none, while also disabling any previous use of --size (-s).
+      aliases: ["#all", "#sort = none", "#one", "#color = none", "#hyperlink = none", "#size = BYTES"]
+    reverse:
+      args: -r, --reverse
+      description: Reverse whatever the sorting method is – e.g., list files in reverse alphabetical order, youngest first, smallest first, or whatever. This option has no effect when --sort=none (-U) is in effect.
+    sort_size:
+      args: -S, --sort=size
+      description: Sort by file size, largest first.
+      notes: "#sort = size"
+    sort_time:
+      args: -t, --sort=time
+      description: Sort by modification timestamp (mtime) by default, newest first. The timestamp to order by can be changed with the --time option.
+      notes: "#sort = time"
+    sort_none:
+      args: -U, --sort=none
+      description: Do not sort; list the files in whatever order they are stored in the directory. This is the default.
+      notes: "#sort = none"
+    sort_version:
+      args: -v, --sort=version
+      description: Sort by version number, natural sort of (version) numbers within text.
+      notes: "#sort = version"
+    sort_width:
+      args: --sort=width
+      description: Assume the terminal is N columns wide. This option is used to determine the width of the output, which is used when formatting file names in a column.
+      notes: "#sort = width"
+  format:
+    format:
+      args: --format
+      options:
+        - [long, verbose]
+        - commas
+        - [horizontal, across]
+        - vertical
+        - single-column
+    format_single_column:
+      args: --format=single-column
+      description: List one file name per line, with no other information. This is the default for ls when standard output is not a terminal.
+    format_one:
+      args: "-1"
+      description: List one file per line. This is the default when standard output is not a terminal.
+      notes: "#format != long && #format = single-column"
+    format_vertical:
+      args: -C, --format=vertical
+      description: List files in columns, sorted vertically, with no other information. This is the default for ls if standard output is a terminal. It is always the default for the dir program. GNU ls uses variable width columns to display as many files as possible in the fewest lines.
+      notes: "#format = vertical"
+    block_size:
+      args: --block-size
+      options:
+        - si
+        - human-readable
+        - [kB]
+        - [k, K, KiB]
+        - [MB]
+        - [M, MiB]
+        - [GB]
+        - [G, GiB]
+        - [TB]
+        - [T, TiB]
+        - [PB]
+        - [P, PiB]
+        - [EB]
+        - [E, EiB]
+      description: "Scale sizes by SIZE before printing them. SIZE may be (or may be an integer optionally followed by) one of following: KB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y."
+      notes: "https://www.gnu.org/software/coreutils/manual/html_node/Block-size.html#index-_002d_002dblock_002dsize"
+    classify:
+      args: -F, --classify[=when], --indicator-style=classify
+      options:
+        - always
+        - never
+        - auto
+      description: Append a character indicator to each file name
+      notes: Specifying --classify and no when is equivalent to --classify=always. Do not follow symbolic links listed on the command line unless the --dereference-command-line (-H), --dereference (-L), or --dereference-command-line-symlink-to-dir options are specified.
+      aliases: ["#indicator_style = classify"]
+    ind_style_file_type:
+      args: --file-type, --indicator-style=file-type
+      description: Append a character to each file name indicating the file type. This is like --classify (-F, except that executables are not marked.
+    indicator_style:
+      args: --indicator-style
+      options:
+        - none
+        - slash
+        - file-type
+        - classify
+      description:
+        - Append a character indicator with style word to entry names.
+        - "none: no indicator"
+        - "slash: append / indicator to directories"
+        - "file-type: Append ‘/’ for directories, ‘@’ for symbolic links, ‘|’ for FIFOs, ‘=’ for sockets, and nothing for regular files. This is the same as the --file-type option."
+        - "classify: Append ‘*’ for executable regular files, otherwise behave as for ‘file-type’. This is the same as the --classify (-F) option."
+    kibibytes:
+      args: -k, --block-size=k
+      description: "Set the default block size to its normal value of 1024 bytes, overriding any contrary specification in environment variables (see Block size). If --block-size, --human-readable (-h), or --si options are used, they take precedence even if --kibibytes (-k) is placed after"
+      notes:
+        - "The --kibibytes (-k) option affects the per-directory block count written in long format, and the file system allocation written by the --size (-s) option. It does not affect the file size in bytes that is written in long format."
+        - "#block_size = KIBIBYTES"
+    format_commas:
+      args: -m, --format=commas
+      description: List files horizontally, with as many as will fit on each line, separated by ‘, ’ (a comma and a space), and with no other information.
+      notes: "#format = commas"
+    ind_style_slash:
+      args: -p, --indicator-style=slash
+      description: Append a slash to each directory name.
+      notes: "#indicator_style = slash"
+    format_horizontal:
+      args: -x, --format=horizontal, --format=across
+      description: List files horizontally, with as many as will fit on each line, and with no other information.
+      notes: "#format = horizontal"
+mandatory:
+  - long_format
+  - recursive
+  - all
+  - reverse
+  - sort_time
+done:
+  - block_size

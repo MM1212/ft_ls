@@ -1,0 +1,6 @@
+[submodule "libs/cli"]
+	path = libs/cli
+	url = git@github.com:MM1212/cli.git
+[submodule "libs/libft"]
+	path = libs/libft
+	url = git@github.com:MM1212/42-libft.git

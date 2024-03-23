@@ -1,0 +1,48 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "C_Cpp.formatting": "vcFormat",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "editor.minimap.enabled": false,
+    "explorer.confirmDragAndDrop": false,
+    "workbench.iconTheme": "material-icon-theme",
+    "editor.smoothScrolling": true,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "window.zoomLevel": 0,
+    "files.associations": {
+      ".env.production": "dotenv",
+      "libft.h": "c",
+      "cli.h": "c",
+      "io.h": "c",
+      "ft_printf_int_flags.h": "c",
+      "array": "c",
+      "*.tcc": "c",
+      "chrono": "c",
+      "cmath": "c",
+      "deque": "c",
+      "string": "c",
+      "unordered_map": "c",
+      "vector": "c",
+      "exception": "c",
+      "functional": "c",
+      "string_view": "c",
+      "memory": "c",
+      "random": "c",
+      "initializer_list": "c",
+      "numeric": "c",
+      "ostream": "c",
+      "streambuf": "c",
+      "system_error": "c"
+    },
+    "files.exclude": {
+      "**/*.o": false,
+      "**/*.a": false,
+      "libs": false
+    }
+  }
+}
