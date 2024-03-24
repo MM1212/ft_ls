@@ -146,6 +146,7 @@ properties:
       description: Sort by modification timestamp (mtime) by default, newest first. The timestamp to order by can be changed with the --time option.
       notes: "#sort = time"
     sort_none:
+      done: true
       args: -U, --sort=none
       description: Do not sort; list the files in whatever order they are stored in the directory. This is the default.
       notes: "#sort = none"
