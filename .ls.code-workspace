@@ -37,7 +37,22 @@
       "numeric": "c",
       "ostream": "c",
       "streambuf": "c",
-      "system_error": "c"
+      "system_error": "c",
+      "colors.h": "c",
+      "ft_ls.h": "c",
+      "file.h": "c",
+      "dirent.h": "c",
+      "unistd.h": "c",
+      "stdlib.h": "c",
+      "hashtable.h": "c",
+      "padding.h": "c",
+      "settings.h": "c",
+      "output.h": "c",
+      "errno.h": "c",
+      "stdint.h": "c",
+      "stat.h": "c",
+      "string.h": "c",
+      "stdio.h": "c"
     },
     "files.exclude": {
       "**/*.o": false,

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   recursive.c                                        :+:      :+:    :+:   */
+/*   inode.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -15,18 +15,18 @@
 
 static void ignore_cb(t_cli_option* opt, t_ft_ls* data) {
   (void)opt;
-  data->settings.filter.recursive = true;
+  data->settings.display.inode = true;
 }
 
-bool io_describe_filter_recursive(t_cli_handle* cli) {
+bool io_describe_display_inode(t_cli_handle* cli) {
   t_cli_option_builder* opt = cli->new_option(\
-    "recursive",
-    "list subdirectories recursively",
+    "inode",
+    "print the index number of each file",
     true
   );
   if (!opt)
     return false;
-  opt->add_switch('R')
+  opt->add_switch('i')
     ->set_cb((t_cli_option_cb)ignore_cb)
     ->end();
   return cli->is_valid();

@@ -1,20 +1,23 @@
 properties:
   filter:
     all:
+      done: true
       args: -a, --all
       description: 'In directories, do not ignore file names that start with ‘.’.'
       notes: N/A
-      done: false
     almost_all:
+      done: true
       args: -A, --almost-all
       description: In directories, do not ignore all file names that start with ‘.’; ignore only . and ... The --all (-a) option overrides this option.
       notes: '#all overrides this option.'
     ignore_backups:
+      done: true
       args: -B, --ignore-backups
       description: In directories, ignore files that end with ‘~’. This option is equivalent to ‘--ignore='*~' --ignore='.*~'’.
       notes: N/A
       synonyms: [--ignore='*~', --ignore='.*~']
     list_directories:
+      done: true
       args: -d, --list-directories
       description: List just the names of directories, as with other types of files, rather than listing their contents.
       notes: 'Do not follow symbolic links listed on the command line unless #dereference_links_cli or #dereference_links options are specified.'
@@ -27,8 +30,14 @@ properties:
     recursive:
       args: -R, --recursive
       description: List the contents of directories recursively. When a symbolic link to a directory is encountered, ls will traverse the directory only if the symbolic link is encountered on the command line or ls is operating in long format.
+    ignore:
+      done: true
+      args: -I, --ignore
+      description: Do not list implied entries matching shell PATTERN (overridden by -a or -A).
+      notes: only supports * and ? wildcards
   display:
     author:
+      done: true
       args: --author
       description: In long format, list each file’s author. In GNU/Hurd, file authors can differ from their owners, but in other operating systems the two are the same.
     full_time:
@@ -36,27 +45,34 @@ properties:
       description: Produce long format, and list times in full. It is equivalent to using --format=long (-l) with --time-style=full-iso
       aliases: [["#long_format", "#time_style == full-iso"]]
     omit_owner:
+      done: true
       args: -g
       description: Produce long format, but omit owner information.
       notes: "turn on #long_format"
     omit_group:
+      done: true
       args: -G, --no-group
       description: Inhibit display of group information in long format. (This is the default in some non-GNU versions of ls, so we provide this option for compatibility.)
     human_readable:
+      done: true
       args: -h, --human-readable
       description: Append a size letter to each size, such as ‘M’ for mebibytes. Powers of 1024 are used, not 1000; ‘M’ stands for 1,048,576 bytes. This option is equivalent to --block-size=human-readable.
       notes: "#block_size = HUMAN_READABLE"
     inode:
+      done: true
       args: -i, --inode
       description: Print the inode number (also called the file serial number and index number) of each file to the left of the file name. (This number uniquely identifies each file within a particular file system.)
     long_format:
+      done: true
       args: -l, --format=long, --format=verbose
       description: "https://www.gnu.org/software/coreutils/manual/html_node/What-information-is-listed.html#index-_002dl-7"
       notes: "#format = long"
     numeric_ids:
+      done: true
       args: -n, --numeric-uid-gid
       description: Produce long format, but display right-justified numeric user and group IDs instead of left-justified owner and group names.
     long_omit_group:
+      done: true
       args: -o
       description: Produce long format, but omit group information.
       notes:
@@ -93,6 +109,7 @@ properties:
       description: With long format, display the file’s birth time, if available.
       notes: "#time = CREATED"
     color:
+      done: true
       args: --color
       options:
         - [always, yes, force]
@@ -110,17 +127,21 @@ properties:
         - version
         - width
     unsorted_mix:
+      done: true
       args: -f
       description: Produce an unsorted directory listing. This is equivalent to the combination of --all (-a), --sort=none (-U), -1, --color=none, and --hyperlink=none, while also disabling any previous use of --size (-s).
       aliases: ["#all", "#sort = none", "#one", "#color = none", "#hyperlink = none", "#size = BYTES"]
     reverse:
+      done: true
       args: -r, --reverse
       description: Reverse whatever the sorting method is – e.g., list files in reverse alphabetical order, youngest first, smallest first, or whatever. This option has no effect when --sort=none (-U) is in effect.
     sort_size:
+      done: true
       args: -S, --sort=size
       description: Sort by file size, largest first.
       notes: "#sort = size"
     sort_time:
+      done: true
       args: -t, --sort=time
       description: Sort by modification timestamp (mtime) by default, newest first. The timestamp to order by can be changed with the --time option.
       notes: "#sort = time"
@@ -131,13 +152,16 @@ properties:
     sort_version:
       args: -v, --sort=version
       description: Sort by version number, natural sort of (version) numbers within text.
-      notes: "#sort = version"
+      notes:
+        - "#sort = version"
+        - https://www.gnu.org/software/coreutils/manual/html_node/Version-sort-overview.html
     sort_width:
       args: --sort=width
       description: Assume the terminal is N columns wide. This option is used to determine the width of the output, which is used when formatting file names in a column.
       notes: "#sort = width"
   format:
     format:
+      done: true
       args: --format
       options:
         - [long, verbose]
@@ -146,6 +170,7 @@ properties:
         - vertical
         - single-column
     format_single_column:
+      done: true
       args: --format=single-column
       description: List one file name per line, with no other information. This is the default for ls when standard output is not a terminal.
     format_one:
@@ -207,6 +232,7 @@ properties:
         - "The --kibibytes (-k) option affects the per-directory block count written in long format, and the file system allocation written by the --size (-s) option. It does not affect the file size in bytes that is written in long format."
         - "#block_size = KIBIBYTES"
     format_commas:
+      done: true
       args: -m, --format=commas
       description: List files horizontally, with as many as will fit on each line, separated by ‘, ’ (a comma and a space), and with no other information.
       notes: "#format = commas"
@@ -215,6 +241,7 @@ properties:
       description: Append a slash to each directory name.
       notes: "#indicator_style = slash"
     format_horizontal:
+      done: true
       args: -x, --format=horizontal, --format=across
       description: List files horizontally, with as many as will fit on each line, and with no other information.
       notes: "#format = horizontal"
@@ -224,5 +251,3 @@ mandatory:
   - all
   - reverse
   - sort_time
-done:
-  - block_size

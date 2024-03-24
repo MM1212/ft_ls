@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   recursive.c                                        :+:      :+:    :+:   */
+/*   list_directories.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -15,18 +15,19 @@
 
 static void ignore_cb(t_cli_option* opt, t_ft_ls* data) {
   (void)opt;
-  data->settings.filter.recursive = true;
+  data->settings.filter.list_directories = true;
 }
 
-bool io_describe_filter_recursive(t_cli_handle* cli) {
+bool io_describe_filter_list_directories(t_cli_handle* cli) {
   t_cli_option_builder* opt = cli->new_option(\
-    "recursive",
-    "list subdirectories recursively",
-    true
+    "list_directories",
+    "list directories themselves, not their contents",
+    false
   );
   if (!opt)
     return false;
-  opt->add_switch('R')
+  opt->add_switch('d')
+    ->add_flag("directory")
     ->set_cb((t_cli_option_cb)ignore_cb)
     ->end();
   return cli->is_valid();

@@ -1,33 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   recursive.c                                        :+:      :+:    :+:   */
+/*   unsorted_mix.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 22:07:50 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/24 22:40:43 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "io.h"
 #include <ft_ls.h>
 
-static void ignore_cb(t_cli_option* opt, t_ft_ls* data) {
+static void cb(t_cli_option* opt, t_ft_ls* data) {
   (void)opt;
-  data->settings.filter.recursive = true;
+  data->settings.sort.type = SORT_NONE;
+  data->settings.format.type = FORMAT_LONG;
+  data->settings.display.block_size = false;
+  data->settings.display.color = SETTINGS_COLOR_NEVER;
 }
 
-bool io_describe_filter_recursive(t_cli_handle* cli) {
+bool io_describe_sort_unsorted_mix(t_cli_handle* cli) {
   t_cli_option_builder* opt = cli->new_option(\
-    "recursive",
-    "list subdirectories recursively",
-    true
+    "unsorted_mix",
+    "do not sort, enable -aU, disable -ls --color",
+    false
   );
   if (!opt)
     return false;
-  opt->add_switch('R')
-    ->set_cb((t_cli_option_cb)ignore_cb)
+  opt->add_switch('f')
+    ->set_cb((t_cli_option_cb)cb)
     ->end();
   return cli->is_valid();
 }

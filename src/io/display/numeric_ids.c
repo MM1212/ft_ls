@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   recursive.c                                        :+:      :+:    :+:   */
+/*   numeric_ids.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -15,18 +15,20 @@
 
 static void ignore_cb(t_cli_option* opt, t_ft_ls* data) {
   (void)opt;
-  data->settings.filter.recursive = true;
+  data->settings.display.numeric_ids = true;
+  data->settings.format.type = FORMAT_LONG;
 }
 
-bool io_describe_filter_recursive(t_cli_handle* cli) {
+bool io_describe_display_numeric_ids(t_cli_handle* cli) {
   t_cli_option_builder* opt = cli->new_option(\
-    "recursive",
-    "list subdirectories recursively",
-    true
+    "numeric_ids",
+    "like -l, but list numeric user and group IDs",
+    false
   );
   if (!opt)
     return false;
-  opt->add_switch('R')
+  opt->add_switch('n')
+    ->add_flag("numeric-uid-gid")
     ->set_cb((t_cli_option_cb)ignore_cb)
     ->end();
   return cli->is_valid();

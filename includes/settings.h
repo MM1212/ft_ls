@@ -6,12 +6,13 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:26:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/23 16:11:19 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/24 22:46:37 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include <file.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -21,12 +22,13 @@ typedef struct s_settings_display t_settings_display;
 typedef struct s_settings_sort t_settings_sort;
 typedef struct s_settings_format t_settings_format;
 
+typedef enum e_settings_color t_settings_color;
 typedef enum e_settings_block_size t_settings_block_size;
 typedef enum e_settings_time t_settings_time;
 typedef enum e_settings_sort_type t_settings_sort_type;
 typedef enum e_settings_format_type t_settings_format_type;
 typedef enum e_settings_indicator_style t_settings_indicator_style;
-
+typedef int (*t_settings_sort_cmp)(t_file*, t_file*);
 struct s_settings_filter {
   bool all;
   bool almost_all;
@@ -35,6 +37,7 @@ struct s_settings_filter {
   bool dereference_links_cli;
   bool dereference_links;
   bool recursive;
+  char* ignore_pattern;
 };
 /*
   Options:
@@ -69,13 +72,20 @@ enum e_settings_time {
   TIME_CREATED
 };
 
+enum e_settings_color {
+  SETTINGS_COLOR_AUTO,
+  SETTINGS_COLOR_ALWAYS,
+  SETTINGS_COLOR_NEVER
+};
+
 struct s_settings_display {
   bool author;
   bool omit_owner;
   bool omit_group;
   bool inode;
+  bool block_size;
   bool numeric_ids;
-  bool size;
+  t_settings_color color;
 };
 
 /*
@@ -86,10 +96,10 @@ struct s_settings_display {
 */
 
 enum e_settings_sort_type {
+  SORT_ASCII,
   SORT_NONE,
   SORT_TIME,
   SORT_SIZE,
-  SORT_EXTENSION,
   SORT_VERSION,
   SORT_WIDTH
 };
@@ -97,6 +107,7 @@ enum e_settings_sort_type {
 struct s_settings_sort {
   t_settings_sort_type type;
   bool reverse;
+  t_settings_sort_cmp cmp;
 };
 
 enum e_settings_format_type {
@@ -126,4 +137,10 @@ struct s_settings {
   t_settings_display display;
   t_settings_sort sort;
   t_settings_format format;
+  bool print_dir_name;
+  bool is_tty;
 };
+
+void settings_init(t_settings* settings);
+void settings_print(t_settings* settings);
+void settings_choose_sort(t_settings* settings);
