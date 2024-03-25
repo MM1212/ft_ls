@@ -246,6 +246,16 @@ properties:
       args: -x, --format=horizontal, --format=across
       description: List files horizontally, with as many as will fit on each line, and with no other information.
       notes: "#format = horizontal"
+    time_style:
+      args: --time-style
+      options:
+        - full-iso
+        - long-iso
+        - iso
+        - locale
+        - +FORMAT
+      description: "https://www.gnu.org/software/coreutils/manual/html_node/Formatting-file-timestamps.html#index-_002d_002dtime_002dstyle"
+      notes: "#long_format && #full_time"
 mandatory:
   - long_format
   - recursive

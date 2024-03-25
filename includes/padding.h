@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:14:33 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 19:40:42 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/25 22:31:14 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 #include <stddef.h>
 #include <libft.h>
 #include <settings.h>
-
-#define FT_MAX(a, b) ((a) > (b) ? (a) : (b))
+#include <utils.h>
 
 typedef struct s_l_fmt_padding {
   size_t inode;

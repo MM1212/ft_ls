@@ -6,12 +6,13 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:31:13 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 22:25:24 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/25 11:59:00 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ft_ls.h>
 #include "output.h"
+#include <sort.h>
 
 static void display_files(t_list* files, t_ft_ls* data) {
   data->padding = get_padding(files, &data->settings);
@@ -24,15 +25,14 @@ static void display_directory(t_file* dir, t_ft_ls* data) {
   t_list* files = get_files_from_dir(dir, &data->settings);
   if (!files)
     return;
-  if (ft_lstsize(files)) {
-    data->padding = get_padding(files, &data->settings);
-    if (data->settings.format.type == FORMAT_LONG)
-      ft_printf("total %u\n", get_total_blocks(files));
-    data->first_batch_print = true;
-    ft_lstiter2(files, (t_lst_iter2)file_print, data);
-    // ft_lstiter(files, (t_lst_iter)file_debug_print);
-    ft_printf("\n");
-  }
+  data->padding = get_padding(files, &data->settings);
+  if (data->settings.format.type == FORMAT_LONG)
+    ft_printf("total %u\n", get_total_blocks(files));
+  data->first_batch_print = true;
+  sort_files(files, &data->settings);
+  ft_lstiter2(files, (t_lst_iter2)file_print, data);
+  // ft_lstiter(files, (t_lst_iter)file_debug_print);
+  ft_printf("\n");
   ft_lstclear(&files, (void (*)(void *))file_free);
 }
 

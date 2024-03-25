@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 22:30:59 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 22:46:06 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/25 22:13:13 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@
 #include <file.h>
 
 // DEFAULT
-int sort_ascii(t_file *a, t_file *b);
+int sort_by_ascii(t_file *a, t_file *b);
 // sort by modficication time, newest first
-int sort_time(t_file *a, t_file *b);
+int sort_by_time(t_file *a, t_file *b, t_settings *settings);
 // sort by size, largest first
-int sort_size(t_file *a, t_file *b);
+int sort_by_size(t_file *a, t_file *b);
 // reverse order
-int sort_reverse(t_file *a, t_file *b);
+int sort_by_reverse(t_file *a, t_file *b);
 // https://www.gnu.org/software/coreutils/manual/html_node/Version-sort-overview.html
-int sort_version(t_file *a, t_file *b);
+int sort_by_version(t_file *a, t_file *b);
+
+void sort_files(t_list *files, t_settings *settings);

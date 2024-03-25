@@ -6,13 +6,14 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:42:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 22:27:37 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/25 21:36:53 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "output.h"
 #include <ft_ls.h>
 #include <system.h>
+#include <date.h>
 
 void file_print(t_file* file, t_ft_ls* data) {
   t_l_fmt_padding* padding = &data->padding;
@@ -79,8 +80,7 @@ void file_print(t_file* file, t_ft_ls* data) {
     // SIZE, TODO: compute based on block-size
     ft_printf("%*d ", padding->size, file->stat.st_size);
     // DATE
-    char date[DATE_SIZE];
-    ft_printf("%s ", get_file_verbose_time(file, date));
+    date_output_verbose_date(file, &data->settings);
   }
   char* color_code = get_color_for_file(file, data->colors, &data->settings);
   ft_printf("%s%s%s", color_code ? color_code : "", file->name, color_code ? COLORS_RESET : "");

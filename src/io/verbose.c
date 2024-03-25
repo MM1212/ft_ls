@@ -6,12 +6,13 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:14:33 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 15:55:11 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/25 22:49:59 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "io.h"
 #include <colors.h>
+#include <utils.h>
 
 #ifndef VERSION
 # define VERSION "N/A"
@@ -44,6 +45,9 @@ static void help_print_option_description(char* desc, size_t size, bool pad) {
   desc = ft_strtrim(desc, " \n\t\v\f\r");
   if (!desc)
     return;
+  char* whitespace;
+  while ((whitespace = ft_strchr(desc, '\1')))
+    *whitespace = ' ';
   size_t len = ft_strlen(desc);
   if (len <= size) {
     ft_printf("%s\n", desc);
@@ -53,10 +57,24 @@ static void help_print_option_description(char* desc, size_t size, bool pad) {
   size_t idx = len - 1;
   if (idx > size)
     idx = size;
-
-  if (!ft_isspace(desc[idx]) && !ft_isspace(desc[idx + 1]))
-    while (idx > 0 && !ft_isspace(desc[idx]))
-      idx--;
+  char* new_line;
+  if ((new_line = ft_strchr(desc, '\n')) && new_line < desc + size)
+    idx = new_line - desc;
+  if (new_line)
+    idx--;
+  bool dont_indent_next = new_line && (new_line - desc) > 1 && *(new_line - 1) == '\r';
+  if (dont_indent_next)
+    idx--;
+  size_t last_space = idx;
+  while (last_space > 0 && !ft_isspace(desc[last_space]))
+      last_space--;
+  size_t post_space = idx;
+  while (post_space < len && !ft_isspace(desc[post_space]))
+      post_space++;
+  if ((post_space - idx) < (idx - last_space))
+    idx = post_space;
+  else
+    idx = last_space;
   if (idx == 0)
     idx = size;
   ft_printf("%.*s\n", idx, desc);
@@ -67,14 +85,16 @@ static void help_print_option_description(char* desc, size_t size, bool pad) {
     return;
   }
   if (pad)
-    ft_printf("%*s", HELP_SWITCHES_SIZE + 2, "");
+    ft_printf("%*s", HELP_SWITCHES_SIZE + (!dont_indent_next * 2), "");
   help_print_option_description(next, size, pad);
   free(desc);
 }
 
 static bool help_print_option(t_cli_option* opt) {
   char* switches_and_flags = NULL;
+  bool output_switches = false;
   for (uint32_t i = 0; i < opt->_switches_size; i++) {
+    output_switches = true;
     char switch_value[] = { opt->_switches[i].letter, '\0' };
     char* tmp = ft_strjoin(
       4,
@@ -134,10 +154,12 @@ static bool help_print_option(t_cli_option* opt) {
     }
     ft_split_free(aliases);
   }
-  size_t len = ft_printf("  %-*s", HELP_SWITCHES_SIZE - 2, switches_and_flags);
+  size_t len = ft_printf("%*s%-*s", !output_switches ? 6 : 2, "", HELP_SWITCHES_SIZE - (output_switches ? 2 : 6), switches_and_flags);
   free(switches_and_flags);
   if (len > HELP_SWITCHES_SIZE)
     ft_printf("\n%*s", HELP_SWITCHES_SIZE, "");
+  else if (ft_strlen(switches_and_flags) == HELP_SWITCHES_SIZE)
+    ft_printf("  ");
   help_print_option_description(opt->description, HELP_DESCRIPTION_SIZE, true);
   return true;
 }

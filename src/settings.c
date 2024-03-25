@@ -6,16 +6,12 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:56:45 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 19:38:01 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/25 20:58:20 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "settings.h"
 #include <libft.h>
-
-void settings_init(t_settings* settings) {
-  (void)settings;
-}
 
 void settings_print(t_settings* settings) {
   ft_printf("Settings:\n");

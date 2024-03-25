@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 22:23:41 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/25 23:34:22 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 static bool init(t_ft_ls* data, char** env) {
   ft_bzero(data, sizeof(t_ft_ls));
-  data->io = cli_begin(data);
+  data->io = cli_begin("ft_ls", data);
   data->colors = colors_registry_create(env);
   data->settings.is_tty = isatty(STDOUT_FILENO);
   if (!data->io || !data->colors)
@@ -29,8 +29,9 @@ static int sort_entries(t_file* a, t_file* b) {
 }
 
 static void manage_settings(t_ft_ls* data) {
-  if (!data->io->is_present("format") && !data->settings.is_tty)
-    data->settings.format.type = FORMAT_SINGLE_COLUMN;
+  if (data->settings.format.type == FORMAT_NONE) {
+    data->settings.format.type = data->settings.is_tty ? FORMAT_HORIZONTAL : FORMAT_SINGLE_COLUMN;
+  }
 }
 
 static void parse_entries(t_ft_ls* data, char** entries) {
@@ -48,6 +49,8 @@ static void parse_entries(t_ft_ls* data, char** entries) {
 
     ft_lstadd_back(&base, ft_lstnew(file));
   }
+  if (!base)
+    return;
   ft_lstsort(base, (int (*)(void* a, void* b))sort_entries);
   data->settings.print_dir_name = i > 1;
   if (data->settings.filter.list_directories) {

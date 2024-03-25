@@ -52,7 +52,9 @@
       "stdint.h": "c",
       "stat.h": "c",
       "string.h": "c",
-      "stdio.h": "c"
+      "stdio.h": "c",
+      "sort.h": "c",
+      "date.h": "c"
     },
     "files.exclude": {
       "**/*.o": false,

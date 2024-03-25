@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:01:44 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 22:17:46 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/25 21:21:06 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,4 @@ t_list* get_files_from_dir(t_file* dir, t_settings* settings) {
   }
   closedir(d);
   return files;
-}
-
-char* get_file_verbose_time(t_file* file, char buf[DATE_SIZE]) {
-  if (!file->statd && !file_stat(file))
-    return NULL;
-  const char* skip_week_day = ctime(&file->stat.st_mtime) + 4; // Skip week day (3 chars) + whitespace
-  ft_strlcpy(buf, skip_week_day, DATE_SIZE);
-  return buf;
 }

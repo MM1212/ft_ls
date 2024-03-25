@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:26:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 22:46:37 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/25 22:57:14 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ typedef enum e_settings_time t_settings_time;
 typedef enum e_settings_sort_type t_settings_sort_type;
 typedef enum e_settings_format_type t_settings_format_type;
 typedef enum e_settings_indicator_style t_settings_indicator_style;
-typedef int (*t_settings_sort_cmp)(t_file*, t_file*);
+typedef enum e_settings_time_style t_settings_time_style;
+
+typedef int (*t_settings_sort_cmp)(t_file*, t_file*, t_settings*);
 struct s_settings_filter {
   bool all;
   bool almost_all;
@@ -111,6 +113,7 @@ struct s_settings_sort {
 };
 
 enum e_settings_format_type {
+  FORMAT_NONE,
   FORMAT_HORIZONTAL,
   FORMAT_LONG,
   FORMAT_COMMAS,
@@ -125,11 +128,21 @@ enum e_settings_indicator_style {
   INDICATOR_STYLE_CLASSIFY
 };
 
+enum e_settings_time_style {
+  TIME_STYLE_LOCALE,
+  TIME_STYLE_FULL,
+  TIME_STYLE_LONG,
+  TIME_STYLE_ISO,
+  TIME_STYLE_FORMAT
+};
+
 struct s_settings_format {
   t_settings_format_type type;
   t_settings_block_size block_size;
   t_settings_time time;
   t_settings_indicator_style indicator_style;
+  t_settings_time_style time_style;
+  char* time_format;
 };
 
 struct s_settings {
@@ -141,6 +154,5 @@ struct s_settings {
   bool is_tty;
 };
 
-void settings_init(t_settings* settings);
 void settings_print(t_settings* settings);
-void settings_choose_sort(t_settings* settings);
+char* settings_get_date_format(t_settings* settings);

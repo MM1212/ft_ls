@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   output.h                                           :+:      :+:    :+:   */
+/*   date.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/24 18:00:16 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/25 21:21:40 by martiper         ###   ########.fr       */
+/*   Created: 2024/03/25 20:56:45 by martiper          #+#    #+#             */
+/*   Updated: 2024/03/25 21:36:41 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <ft_ls.h>
-#include <file.h>
+#include <lxt/date.h>
+#include <stddef.h>
+#include <settings.h>
 
-void file_print(t_file* file, t_ft_ls* data);
-t_list* get_files_from_dir(t_file* dir, t_settings* settings);
+void date_output_verbose_date(t_file* file, t_settings* settings);

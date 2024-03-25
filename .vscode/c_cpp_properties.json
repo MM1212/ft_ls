@@ -9,7 +9,7 @@
         "${workspaceFolder}/libs/libft/includes",
         "${workspaceFolder}/libs/cli/includes"
       ],
-      "defines": [],
+      "defines": ["__USE_XOPEN2K8"],
       "compilerPath": "/usr/bin/clang",
       "cStandard": "c17",
       "cppStandard": "c++14",
