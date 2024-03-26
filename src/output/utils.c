@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:01:44 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 17:19:43 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 21:36:01 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <time.h>
+#include <system.h>
 
 static bool filter_file(struct dirent* entry, t_settings* settings) {
   bool is_hidden = entry->d_name[0] == '.';
@@ -34,8 +35,12 @@ static bool filter_file(struct dirent* entry, t_settings* settings) {
   return false;
 }
 
-t_list* get_files_from_dir(t_file* dir, t_settings* settings) {
-  t_list* files = NULL;
+t_vector* get_files_from_dir(t_file* dir, t_settings* settings) {
+  t_vector* files = vector_create3(sizeof(t_file), 16, (t_vector_delete_f)file_cleanup);
+  if (!files) {
+    ft_show_error(g_ls_data, EXIT_FATAL, false, false, "cannot allocate memory");
+    return NULL;
+  }
   DIR* d = opendir(dir->full_path);
   if (!d) {
     ft_show_error(g_ls_data, EXIT_MINOR, false, true, "cannot open directory '%s'", dir->input);
@@ -46,18 +51,22 @@ t_list* get_files_from_dir(t_file* dir, t_settings* settings) {
     if (filter_file(entry, settings))
       continue;
     t_file_type type = get_file_type_by_dirent(entry->d_type);
-    t_file* file = file_from_dir_entry(entry->d_name, dir->full_path, entry);
+    t_file* file = files->emplace_back(files);
+    if (!file) {
+      ft_show_error(g_ls_data, EXIT_FATAL, false, false, "cannot allocate memory");
+      break;
+    }
+    file_from_dir_entry(entry->d_name, dir->full_path, entry, file);
     if (type == FILE_SYMLINK && settings->filter.dereference_links) {
-      t_file* link = file_from_symlink(file);
-      if (link) {
-        file_free(file);
-        file = link;
+      t_file link;
+      if (file_from_symlink(file, &link)) {
+        file_cleanup(file);
+        *file = link;
       }
     }
     if (!file)
       continue;
     file->parent = dir;
-    ft_lstadd_back(&files, ft_lstnew(file));
   }
   closedir(d);
   return files;
@@ -97,4 +106,22 @@ char* resolve_path(size_t count, ...) {
   }
   free(path);
   return resolved;
+}
+
+static void add_file_block(t_file* file, uint32_t* total) {
+  if (!file->statd)
+    file_stat(file);
+  *total += FS_BLOCK_SIZE(file->stat.st_blocks);
+}
+
+uint32_t get_total_blocks(t_list* files) {
+  uint32_t total = 0;
+  ft_lstiter2(files, (t_lst_iter2)add_file_block, &total);
+  return total;
+}
+
+uint32_t get_total_blocks2(t_vector* files) {
+  uint32_t total = 0;
+  files->foreach(files, (t_vector_foreach_f)add_file_block, &total);
+  return total;
 }

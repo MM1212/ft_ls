@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:31:13 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 17:19:54 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 21:35:28 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,15 @@ static void display_dir_recursive(char* parent, t_file* file, t_ft_ls* data) {
      data->settings.print_dir_name = true;
  } */
 
+static void file_print_wrapper(t_file* file, size_t idx, t_ft_ls* data) {
+  (void)idx;
+  file_print(file, data);
+}
+
 static void display_directory(char* pre_parents, t_file* dir, t_ft_ls* data) {
-  t_list* files = get_files_from_dir(dir, &data->settings);
+  t_vector* files = get_files_from_dir(dir, &data->settings);
+  if (!files)
+    return;
   if (data->settings.print_dir_name) {
     char* name = data->settings.filter.recursive ? dir->input : dir->name;
     if (dir->parent) {
@@ -60,29 +67,30 @@ static void display_directory(char* pre_parents, t_file* dir, t_ft_ls* data) {
     else
       ft_printf("%s:\n", !dir->parent ? dir->input : dir->name);
   }
-  data->padding = get_padding(files, &data->settings);
+  data->padding = get_padding2(files, &data->settings);
   if (data->settings.format.type == FORMAT_LONG)
-    ft_printf("total %u\n", get_total_blocks(files));
-  if (!files)
+    ft_printf("total %u\n", get_total_blocks2(files));
+  if (!files->size) {
+    files->destroy(files);
     return;
+  }
   data->first_batch_print = true;
-  sort_files(files, &data->settings);
-  ft_lstiter2(files, (t_lst_iter2)file_print, data);
+  sort_files2(files, &data->settings);
+  files->foreach(files, (t_vector_foreach_f)file_print_wrapper, data);
   ft_printf("\n");
   if (data->settings.filter.recursive) {
     pre_parents = resolve_path(2, pre_parents, dir->input);
     if (!pre_parents) {
-      ft_lstclear(&files, (void (*)(void*))file_free);
+      files->destroy(files);
       ft_show_error(data, EXIT_FATAL, true, false, "cannot allocate memory");
     }
-    t_list* iter = files;
-    while (iter) {
-      display_dir_recursive(pre_parents, iter->content, data);
-      iter = iter->next;
+    for (uint32_t i = 0; i < files->size; i++) {
+      t_file* file = files->at(files, i);
+      display_dir_recursive(pre_parents, file, data);
     }
     free(pre_parents);
   }
-  ft_lstclear(&files, (void (*)(void*))file_free);
+  files->destroy(files);
 }
 
 void ft_ls_run(t_ft_ls* data) {

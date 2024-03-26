@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:00:16 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 15:45:13 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 20:40:57 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,10 @@
 
 #include <ft_ls.h>
 #include <file.h>
+#include <lxt/dst/vector.h>
 
 void file_print(t_file* file, t_ft_ls* data);
-t_list* get_files_from_dir(t_file* dir, t_settings* settings);
+t_vector* get_files_from_dir(t_file* dir, t_settings* settings);
+uint32_t get_total_blocks(t_list* files);
+uint32_t get_total_blocks2(t_vector* files);
 char* resolve_path(size_t count, ...);

@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 16:18:11 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 16:11:44 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 20:31:56 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,13 @@ static t_file* new_file(
   const char* name,
   const char* path,
   size_t id,
-  t_file_type type
+  t_file_type type,
+  t_file* ref
 ) {
-  t_file* file = ft_calloc(1, sizeof(t_file));
+  t_file* file = ref ? ref : ft_calloc(1, sizeof(t_file));
   if (!file)
     return NULL;
+  ft_bzero(file, sizeof(t_file));
   file->id = id;
   file->input = ft_strdup(input);
   file->name = ft_strdup(name);
@@ -122,17 +124,19 @@ static t_file* new_file(
 t_file* file_from_dir_entry(
   const char* name,
   const char* path,
-  struct dirent* entry
+  struct dirent* entry,
+  t_file* ref
 ) {
   return new_file(
     name,
     name, path,
     entry->d_ino,
-    get_file_type_by_dirent(entry->d_type)
+    get_file_type_by_dirent(entry->d_type),
+    ref
   );
 }
 
-t_file* file_from_stat(const char* full_path) {
+t_file* file_from_stat(const char* full_path, t_file* ref) {
   struct stat stat;
   if (lstat(full_path, &stat) == -1) {
     ft_show_error(g_ls_data, EXIT_MINOR, false, true, "cannot access '%s'", full_path);
@@ -145,7 +149,8 @@ t_file* file_from_stat(const char* full_path) {
     full_path,
     name, path,
     stat.st_ino,
-    get_file_type_by_stat(stat.st_mode)
+    get_file_type_by_stat(stat.st_mode),
+    ref
   );
   free(path);
   if (!file)
@@ -187,7 +192,7 @@ t_file* file_from_symlink_view(t_file* link, t_file* file) {
   return link;
 }
 
-t_file* file_from_symlink(t_file* file) {
+t_file* file_from_symlink(t_file* file, t_file* ref) {
   if (!file->symlinkd)
     return NULL;
   char* full_path;
@@ -198,7 +203,7 @@ t_file* file_from_symlink(t_file* file) {
     full_path = ft_strjoin(2, file->path, file->symlink);
   if (!full_path)
     return NULL;
-  t_file* link = file_from_stat(full_path);
+  t_file* link = file_from_stat(full_path, ref);
   if (!link) {
     free(full_path);
     return NULL;

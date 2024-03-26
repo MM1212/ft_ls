@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 22:30:59 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/25 22:13:13 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 20:43:16 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include "settings.h"
 #include <file.h>
+#include <lxt/dst/vector.h>
 
 // DEFAULT
 int sort_by_ascii(t_file *a, t_file *b);
@@ -27,3 +28,4 @@ int sort_by_reverse(t_file *a, t_file *b);
 int sort_by_version(t_file *a, t_file *b);
 
 void sort_files(t_list *files, t_settings *settings);
+void sort_files2(t_vector *files, t_settings *settings);

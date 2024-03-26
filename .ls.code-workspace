@@ -54,7 +54,9 @@
       "string.h": "c",
       "stdio.h": "c",
       "sort.h": "c",
-      "date.h": "c"
+      "date.h": "c",
+      "system.h": "c",
+      "vt_internal.h": "c"
     },
     "files.exclude": {
       "**/*.o": false,

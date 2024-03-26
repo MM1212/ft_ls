@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 11:49:36 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 17:15:23 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 20:45:08 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,19 +88,44 @@ int sort_by_version(t_file* a, t_file* b) {
   return a_version - b_version;
 }
 
+static void choose_sort_cmp(t_settings* settings) {
+  switch (settings->sort.type) {
+  case SORT_NONE:
+    break;
+  case SORT_WIDTH:
+    // settings->sort.cmp = (t_settings_sort_cmp)sort_by_width;
+    break;
+  case SORT_ASCII:
+    settings->sort.cmp = (t_settings_sort_cmp)sort_by_ascii;
+    break;
+  case SORT_TIME:
+    settings->sort.cmp = (t_settings_sort_cmp)sort_by_time;
+    break;
+  case SORT_SIZE:
+    settings->sort.cmp = (t_settings_sort_cmp)sort_by_size;
+    break;
+  case SORT_VERSION:
+    settings->sort.cmp = (t_settings_sort_cmp)sort_by_version;
+    break;
+  }
+}
+
 void sort_files(t_list* files, t_settings* settings) {
   if (settings->sort.type == SORT_NONE)
     return;
-  if (settings->sort.type == SORT_ASCII)
-    settings->sort.cmp = (t_settings_sort_cmp)sort_by_ascii;
-  else if (settings->sort.type == SORT_TIME)
-    settings->sort.cmp = (t_settings_sort_cmp)sort_by_time;
-  else if (settings->sort.type == SORT_SIZE)
-    settings->sort.cmp = (t_settings_sort_cmp)sort_by_size;
-  else if (settings->sort.type == SORT_VERSION)
-    settings->sort.cmp = (t_settings_sort_cmp)sort_by_version;
-
-  ft_lstsort2(files, (t_lst_cmp2)settings->sort.cmp, settings);
+  choose_sort_cmp(settings);
+  if (settings->sort.cmp)
+    ft_lstsort2(files, (t_lst_cmp2)settings->sort.cmp, settings);
   if (settings->sort.reverse)
     ft_lstsort(files, (int (*)(void*, void*))sort_by_reverse);
+}
+
+void sort_files2(t_vector* files, t_settings* settings) {
+  if (settings->sort.type == SORT_NONE)
+    return;
+
+  choose_sort_cmp(settings);
+  files->sort2(files, (t_vector_cmp2_f)settings->sort.cmp, settings);
+  if (settings->sort.reverse)
+    files->sort(files, (t_vector_cmp_f)sort_by_reverse);
 }

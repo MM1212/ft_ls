@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:14:33 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/25 22:31:14 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 20:39:36 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <libft.h>
 #include <settings.h>
 #include <utils.h>
+#include <lxt/dst/vector.h>
 
 typedef struct s_l_fmt_padding {
   size_t inode;
@@ -29,3 +30,4 @@ typedef struct s_l_fmt_padding {
 } t_l_fmt_padding;
 
 t_l_fmt_padding get_padding(t_list* files, t_settings* settings);
+t_l_fmt_padding get_padding2(t_vector* files, t_settings* settings);
