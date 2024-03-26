@@ -276,7 +276,6 @@ notes:
   - [get_term_line_length, https://github.com/wertarbyte/coreutils/blob/master/src/ls.c#L1606-L1614]
 
 missing:
-  - recursive
   - size
   - si
   - block_size
