@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 15:08:34 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 19:47:42 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 14:42:36 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,15 +68,22 @@ struct s_file
   char* symlink;
   struct stat lstat;
   t_file_type ltype;
+
+  t_file* parent;
 };
 
 t_file* file_from_dir_entry(const char* name, const char* path, struct dirent* entry);
 t_file* file_from_stat(const char* path);
+t_file* file_from_symlink_view(t_file* dst, t_file* src);
+t_file* file_from_symlink(t_file* file);
 bool file_stat(t_file* file);
 void file_cleanup(t_file* file);
 void file_debug_print(t_file* file);
 void file_free(t_file* file);
 bool file_is_dir(t_file* file);
 uint32_t get_total_blocks(t_list* files);
+void file_build_permissions(t_file* file);
+t_file_type  get_file_type_by_dirent(uint8_t flag);
+t_file_type get_file_type_by_stat(uint32_t mode);
 char* get_file_owner_name(t_file* file);
 char* get_file_group_name(t_file* file);

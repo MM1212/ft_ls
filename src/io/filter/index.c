@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:29:22 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 22:09:08 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 12:29:02 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ static bool (*io_describe_filters[])(t_cli_handle*) = {
   io_describe_filter_ignore,
   io_describe_filter_ignore_backups,
   io_describe_filter_list_directories,
+  io_describe_filter_dereference_links,
+  io_describe_filter_dereference_links_cli
 };
 
 bool io_describe_filter_options(t_cli_handle *cli) {

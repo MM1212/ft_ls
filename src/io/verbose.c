@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:14:33 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/25 22:49:59 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 11:41:17 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,13 @@ static void help_print_desc_footer(char* desc) {
   free(desc);
 }
 
+static void help_print_exit_status() {
+  ft_printf("Exit status:\n");
+  ft_printf(" 0  if OK,\n");
+  ft_printf(" 1  if minor problems (e.g., cannot access subdirectory),\n");
+  ft_printf(" 2  if serious trouble (e.g., cannot access command-line argument).\n");
+}
+
 static void print_help(t_cli_option* opt) {
   ft_printf("Usage: ft_ls [OPTION]... [FILE]...\n");
   ft_printf("List information about the FILEs (the current directory by default).\n");
@@ -186,6 +193,7 @@ static void print_help(t_cli_option* opt) {
   for (uint32_t i = 0; i < opt->_handle->options_size; i++)
     if (opt->_handle->options[i].description_footer != NULL)
       help_print_desc_footer(opt->_handle->options[i].description_footer);
+  help_print_exit_status();
   opt->_handle->settings.should_exit = true;
   opt->_handle->settings.run_cb_only_once = true;
 }

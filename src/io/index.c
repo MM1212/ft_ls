@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:12:37 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/25 23:19:24 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 12:36:01 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <debug.h>
 #include <ft_ls.h>
 
-int io_run(t_ft_ls* data, int ac, char** av, bool* exit_request) {
+int io_run(struct s_ls* data, int ac, char** av, bool* exit_request) {
   *exit_request = false;
   t_cli_handle* handle = data->io;
   if (

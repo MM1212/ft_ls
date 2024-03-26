@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 20:58:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 10:50:58 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:17:06 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 static bool is_date_6_months_ago(time_t date) {
   time_t now = time(NULL);
-  return now - date > SIX_MONTHS_EPOC;
+  return now - date > 31556952 / 2;
 }
 // Wed Jun 30 21:49:08 1993
 static char* get_verbose_locale_time(time_t date, bool is_old) {

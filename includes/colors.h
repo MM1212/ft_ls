@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 14:36:05 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 18:12:48 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 11:58:56 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,10 @@ t_colors_registry* colors_registry_create(char** env);
 char* get_color_for_file(
   t_file* file,
   t_colors_registry* colors,
+  t_settings* settings
+);
+char* get_color_for_symlink(
+  t_file* file,
+  t_colors_registry* reg,
   t_settings* settings
 );

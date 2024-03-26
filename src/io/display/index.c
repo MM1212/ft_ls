@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:29:22 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 21:56:36 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 12:35:05 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ static bool (*io_describe_displays[])(t_cli_handle*) = {
   io_describe_display_color,
   io_describe_display_inode,
   io_describe_display_numeric_ids,
-  io_describe_display_omits
+  io_describe_display_omits,
+  io_describe_display_full_time
 };
 
 bool io_describe_display_options(t_cli_handle *cli) {

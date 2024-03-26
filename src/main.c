@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/25 23:34:22 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 17:15:06 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,14 @@
 #include <ft_ls.h>
 #include <file.h>
 
+t_ft_ls* g_ls_data = NULL;
+
 static bool init(t_ft_ls* data, char** env) {
   ft_bzero(data, sizeof(t_ft_ls));
   data->io = cli_begin("ft_ls", data);
   data->colors = colors_registry_create(env);
   data->settings.is_tty = isatty(STDOUT_FILENO);
+  g_ls_data = data;
   if (!data->io || !data->colors)
     return false;
   return true;
@@ -41,18 +44,23 @@ static void parse_entries(t_ft_ls* data, char** entries) {
     t_file* file = file_from_stat(entries[i]);
     if (!file)
     {
-      char buf[2048];
-      sprintf(buf, "ft_ls: cannot access '%s'", entries[i]);
-      perror(buf);
+      ft_show_error(data, EXIT_MINOR, false, true, "cannot access '%s'", entries[i]);
       continue;
     }
-
+    if (file->type == FILE_SYMLINK &&
+      (data->settings.filter.dereference_links_cli || data->settings.filter.dereference_links)) {
+      t_file* link = file_from_symlink(file);
+      if (link) {
+        file_free(file);
+        file = link;
+      }
+    }
     ft_lstadd_back(&base, ft_lstnew(file));
   }
   if (!base)
     return;
   ft_lstsort(base, (int (*)(void* a, void* b))sort_entries);
-  data->settings.print_dir_name = i > 1;
+  data->settings.print_dir_name = data->settings.filter.recursive || i > 1;
   if (data->settings.filter.list_directories) {
     data->file_entries = base;
     return;
@@ -89,6 +97,5 @@ int main(int ac, char** av, char** env) {
   manage_settings(&data);
   parse_entries(&data, paths);
   ft_ls_run(&data);
-  ft_exit(&data, 0, NULL);
-  return 0;
+  ft_exit(&data, data.exit_status, NULL);
 }

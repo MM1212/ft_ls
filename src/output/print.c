@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:42:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/25 21:36:53 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:20:05 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ void file_print(t_file* file, t_ft_ls* data) {
     ft_printf("%-*u ", padding->inode, file->id);
   if (data->settings.display.block_size && file_stat(file))
     ft_printf("%*u ", padding->block_size, FS_BLOCK_SIZE(file->stat.st_blocks));
-  if (data->settings.format.type == FORMAT_LONG) {
+  bool is_format_long = data->settings.format.type == FORMAT_LONG;
+  if (is_format_long) {
     // PERMISSIONS
     ft_printf("%c", file->type);
     ft_printf("%.3s", file->perms.user);
@@ -82,7 +83,12 @@ void file_print(t_file* file, t_ft_ls* data) {
     // DATE
     date_output_verbose_date(file, &data->settings);
   }
+  // file name
   char* color_code = get_color_for_file(file, data->colors, &data->settings);
   ft_printf("%s%s%s", color_code ? color_code : "", file->name, color_code ? COLORS_RESET : "");
+  if (is_format_long && file->type == FILE_SYMLINK) {
+    char* color_code = get_color_for_symlink(file, data->colors, &data->settings);
+    ft_printf(" -> %s%s%s", color_code ? color_code : "", file->symlink, color_code ? COLORS_RESET : "");
+  }
   data->first_batch_print = false;
 }

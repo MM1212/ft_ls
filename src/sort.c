@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 11:49:36 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/25 22:22:06 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 17:15:23 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,27 +19,27 @@ int sort_by_ascii(t_file* a, t_file* b) {
 
 static time_t get_file_cmp_time(t_file* file, t_settings* settings) {
   switch (settings->format.time) {
-    case TIME_ACCESSED:
-      return file->stat.st_atime;
-    case TIME_CREATED:
-    case TIME_STATUS_CHANGED:
-      return file->stat.st_ctime;
-    case TIME_MODIFIED:
-    default:
-      return file->stat.st_mtime;
+  case TIME_ACCESSED:
+    return file->stat.st_atime;
+  case TIME_CREATED:
+  case TIME_STATUS_CHANGED:
+    return file->stat.st_ctime;
+  case TIME_MODIFIED:
+  default:
+    return file->stat.st_mtime;
   }
 }
 
 static size_t get_file_cmp_nano_time(t_file* file, t_settings* settings) {
   switch (settings->format.time) {
-    case TIME_ACCESSED:
-      return file->stat.st_atim.tv_nsec;
-    case TIME_CREATED:
-    case TIME_STATUS_CHANGED:
-      return file->stat.st_ctim.tv_nsec;
-    case TIME_MODIFIED:
-    default:
-      return file->stat.st_mtim.tv_nsec;
+  case TIME_ACCESSED:
+    return file->stat.st_atim.tv_nsec;
+  case TIME_CREATED:
+  case TIME_STATUS_CHANGED:
+    return file->stat.st_ctim.tv_nsec;
+  case TIME_MODIFIED:
+  default:
+    return file->stat.st_mtim.tv_nsec;
   }
 }
 
@@ -72,7 +72,7 @@ int sort_by_reverse(t_file* a, t_file* b) {
   return -1;
 }
 
-int sort_by_version(t_file *a, t_file *b) {
+int sort_by_version(t_file* a, t_file* b) {
   bool a_is_version = ft_isnbr(a->name);
   bool b_is_version = ft_isnbr(b->name);
   if (!a_is_version && !b_is_version)
@@ -89,6 +89,8 @@ int sort_by_version(t_file *a, t_file *b) {
 }
 
 void sort_files(t_list* files, t_settings* settings) {
+  if (settings->sort.type == SORT_NONE)
+    return;
   if (settings->sort.type == SORT_ASCII)
     settings->sort.cmp = (t_settings_sort_cmp)sort_by_ascii;
   else if (settings->sort.type == SORT_TIME)

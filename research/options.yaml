@@ -22,9 +22,11 @@ properties:
       description: List just the names of directories, as with other types of files, rather than listing their contents.
       notes: 'Do not follow symbolic links listed on the command line unless #dereference_links_cli or #dereference_links options are specified.'
     dereference_links_cli:
+      done: true
       args: -H, --dereference-command-line
       description: If a command line argument specifies a symbolic link, show information for the file the link references rather than for the link itself.
     dereference_links:
+      done: true
       args: -L, --dereference
       description: When showing file information for a symbolic link, show information for the file the link references rather than the link itself. However, even with this option, ls still prints the name of the link itself, not the name of the file that the link points to.
     recursive:
@@ -86,6 +88,7 @@ properties:
       description: Append a size letter to each size, such as ‘M’ for megabytes. Powers of 1000 are used, not 1024; ‘M’ stands for 1,000,000 bytes.
       notes: "#block_size = SI"
     time:
+      done: true
       args: --time
       options:
         - [atime, access, use]
@@ -93,18 +96,22 @@ properties:
         - [birth, creation]
       description: "https://www.gnu.org/software/coreutils/manual/html_node/Sorting-the-output.html"
     time_ctime:
+      done: true
       args: --time=ctime, -c
       description: With long format, display the file’s last status change time.
       notes: "#time = STATUS_CHANGED"
     time_atime:
+      done: true
       args: --time=atime, --time=access, --time=use, -u
       description: With long format, display the file’s last access time.
       notes: "#time = ACCESSED"
     time_mtime:
+      done: true
       args: --time=mtime, --time=modification
       description: With long format, display the file’s last modification time.
       notes: "#time = MODIFIED"
     time_birth:
+      done: true
       args: --time=birth, --time=creation
       description: With long format, display the file’s birth time, if available.
       notes: "#time = CREATED"
@@ -119,6 +126,7 @@ properties:
       notes: "https://www.gnu.org/software/coreutils/manual/html_node/General-output-formatting.html#index-_002d_002dcolor"
   sort:
     sort:
+      done: true
       args: --sort
       options:
         - none
@@ -151,6 +159,7 @@ properties:
       description: Do not sort; list the files in whatever order they are stored in the directory. This is the default.
       notes: "#sort = none"
     sort_version:
+      done: true
       args: -v, --sort=version
       description: Sort by version number, natural sort of (version) numbers within text.
       notes:
@@ -247,6 +256,7 @@ properties:
       description: List files horizontally, with as many as will fit on each line, and with no other information.
       notes: "#format = horizontal"
     time_style:
+      done: true
       args: --time-style
       options:
         - full-iso
@@ -262,3 +272,15 @@ mandatory:
   - all
   - reverse
   - sort_time
+notes:
+  - [get_term_line_length, https://github.com/wertarbyte/coreutils/blob/master/src/ls.c#L1606-L1614]
+
+missing:
+  - recursive
+  - size
+  - si
+  - block_size
+  - classify
+  - ind_style_file_type
+  - indicator_style
+  - kibibytes

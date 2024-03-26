@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 16:18:11 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 20:26:28 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:11:44 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,34 +18,35 @@
 #include <libft.h>
 #include <unistd.h>
 #include <linux/stat.h>
+#include <ft_ls.h>
 
-static t_file_type  get_file_type_by_dirent(uint8_t flag) {
-  switch(flag) {
-    case DT_REG: return FILE_REGULAR;
-    case DT_BLK: return FILE_BLOCK_SPECIAL;
-    case DT_CHR: return FILE_CHARACTER_SPECIAL;
-    case DT_DIR: return FILE_DIRECTORY;
-    case DT_LNK: return FILE_SYMLINK;
-    case DT_FIFO: return FILE_FIFO;
-    case DT_SOCK: return FILE_SOCKET;
-    default: return FILE_OTHER;
+t_file_type  get_file_type_by_dirent(uint8_t flag) {
+  switch (flag) {
+  case DT_REG: return FILE_REGULAR;
+  case DT_BLK: return FILE_BLOCK_SPECIAL;
+  case DT_CHR: return FILE_CHARACTER_SPECIAL;
+  case DT_DIR: return FILE_DIRECTORY;
+  case DT_LNK: return FILE_SYMLINK;
+  case DT_FIFO: return FILE_FIFO;
+  case DT_SOCK: return FILE_SOCKET;
+  default: return FILE_OTHER;
   }
 }
 
-static t_file_type get_file_type_by_stat(uint32_t mode) {
+t_file_type get_file_type_by_stat(uint32_t mode) {
   switch (mode & S_IFMT) {
-    case S_IFREG: return FILE_REGULAR;
-    case S_IFBLK: return FILE_BLOCK_SPECIAL;
-    case S_IFCHR: return FILE_CHARACTER_SPECIAL;
-    case S_IFDIR: return FILE_DIRECTORY;
-    case S_IFLNK: return FILE_SYMLINK;
-    case S_IFIFO: return FILE_FIFO;
-    case S_IFSOCK: return FILE_SOCKET;
-    default: return FILE_OTHER;
+  case S_IFREG: return FILE_REGULAR;
+  case S_IFBLK: return FILE_BLOCK_SPECIAL;
+  case S_IFCHR: return FILE_CHARACTER_SPECIAL;
+  case S_IFDIR: return FILE_DIRECTORY;
+  case S_IFLNK: return FILE_SYMLINK;
+  case S_IFIFO: return FILE_FIFO;
+  case S_IFSOCK: return FILE_SOCKET;
+  default: return FILE_OTHER;
   }
 }
 
-static void build_permissions(t_file* file) {
+void file_build_permissions(t_file* file) {
   struct s_file_permissions* perms = &file->perms;
   perms->user[0] = (file->stat.st_mode & S_IRUSR) ? 'r' : '-';
   perms->user[1] = (file->stat.st_mode & S_IWUSR) ? 'w' : '-';
@@ -59,23 +60,32 @@ static void build_permissions(t_file* file) {
 }
 
 static void file_readlink(t_file* file) {
-  char buf[1024];
-  ssize_t len = readlink(file->full_path, buf, 1023);
-  if (len == -1)
+  char buf[4098];
+  ssize_t len = readlink(file->full_path, buf, 4098);
+  if (len == -1) {
+    ft_show_error(g_ls_data, EXIT_MINOR, false, true, "cannot read symbolic link '%s'", file->full_path);
     return;
+  }
   buf[len] = '\0';
-  char* link = ft_strjoin(2, file->path, buf);
+  char* link = ft_strdup(buf);
+  char* link_path = ft_str_startswith(buf, "/") ? ft_strdup(buf) : ft_strjoin(2, file->path, buf);
+  if (!link || !link_path) {
+    free(link);
+    free(link_path);
+    ft_show_error(g_ls_data, EXIT_FATAL, false, false, "cannot allocate memory");
+    return;
+  }
   file->symlinkd = true;
   file->symlink = link;
-  if (stat(file->symlink, &file->lstat) == -1) {
-    char buf[2048];
-    sprintf(buf, "ft_ls: cannot access '%s'", file->symlink);
-    perror(buf);
+  if (stat(link_path, &file->lstat) == -1) {
+    ft_show_error(g_ls_data, EXIT_MINOR, false, true, "cannot access '%s'", link);
     free(file->symlink);
+    free(link_path);
     file->symlink = NULL;
     file->symlinkd = false;
     return;
   }
+  free(link_path);
   file->ltype = get_file_type_by_dirent(file->lstat.st_mode);
 }
 
@@ -124,8 +134,10 @@ t_file* file_from_dir_entry(
 
 t_file* file_from_stat(const char* full_path) {
   struct stat stat;
-  if (lstat(full_path, &stat) == -1)
+  if (lstat(full_path, &stat) == -1) {
+    ft_show_error(g_ls_data, EXIT_MINOR, false, true, "cannot access '%s'", full_path);
     return NULL;
+  }
   const char* folder_slash = ft_strrchr(full_path, '/');
   const char* name = folder_slash && (*(folder_slash + 1) != '\0') ? folder_slash + 1 : full_path;
   char* path = folder_slash && (*(folder_slash + 1) != '\0') ? ft_substr(full_path, 0, folder_slash - full_path) : ft_strdup("./");
@@ -143,7 +155,7 @@ t_file* file_from_stat(const char* full_path) {
   file->size = stat.st_size;
   file->owner = get_file_owner_name(file);
   file->group = get_file_group_name(file);
-  build_permissions(file);
+  file_build_permissions(file);
   return file;
 }
 
@@ -157,9 +169,46 @@ bool file_stat(t_file* file)
   file->size = file->stat.st_size;
   file->owner = get_file_owner_name(file);
   file->group = get_file_group_name(file);
-  build_permissions(file);
+  file_build_permissions(file);
   return true;
 }
+
+t_file* file_from_symlink_view(t_file* link, t_file* file) {
+  if (!file->symlinkd)
+    return NULL;
+
+  ft_bzero(link, sizeof(t_file));
+  link->stat = file->lstat;
+  link->statd = true;
+  link->size = file->lstat.st_size;
+  link->name = file->symlink;
+  link->type = get_file_type_by_stat(file->lstat.st_mode);
+  file_build_permissions(link);
+  return link;
+}
+
+t_file* file_from_symlink(t_file* file) {
+  if (!file->symlinkd)
+    return NULL;
+  char* full_path;
+
+  if (*file->symlink == '/')
+    full_path = ft_strdup(file->symlink);
+  else
+    full_path = ft_strjoin(2, file->path, file->symlink);
+  if (!full_path)
+    return NULL;
+  t_file* link = file_from_stat(full_path);
+  if (!link) {
+    free(full_path);
+    return NULL;
+  }
+  free(link->name);
+  link->name = ft_strdup(file->name);
+  free(full_path);
+  return link;
+}
+
 
 void file_cleanup(t_file* file) {
   free(file->input);

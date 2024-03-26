@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/25 22:23:14 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 11:39:43 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,49 @@ static void cb(t_cli_option* opt, t_ft_ls* data) {
     data->settings.format.time = TIME_MODIFIED;
 }
 
+static void c_cb(t_cli_option* opt, t_ft_ls* data) {
+  (void)opt;
+  data->settings.format.time = TIME_STATUS_CHANGED;
+}
+
+static void u_cb(t_cli_option* opt, t_ft_ls* data) {
+  (void)opt;
+  data->settings.format.time = TIME_ACCESSED;
+}
+
+static bool add_c_flag(t_cli_handle* cli) {
+  t_cli_option_builder* opt = cli->new_option(
+    "time_ctime",
+    "with -lt: sort by, and show, ctime (time of last\
+ modification of file status information);\n\
+with -l: show ctime and sort by name;\n\
+otherwise: sort by ctime, newest first",
+false
+);
+  if (!opt)
+    return false;
+  opt->set_cb((t_cli_option_cb)c_cb)
+    ->add_switch('c')
+    ->end();
+  return cli->is_valid();
+}
+
+static bool add_u_flag(t_cli_handle* cli) {
+  t_cli_option_builder* opt = cli->new_option(
+    "time_atime",
+    "with -lt: sort by, and show, access time;\n\
+with -l: show access time and sort by name;\n\
+otherwise: sort by access time, newest first",
+false
+);
+  if (!opt)
+    return false;
+  opt->set_cb((t_cli_option_cb)u_cb)
+    ->add_switch('u')
+    ->end();
+  return cli->is_valid();
+}
+
 bool io_describe_format_time(t_cli_handle* cli) {
   t_cli_option_builder* opt = cli->new_option(\
     "time",
@@ -55,5 +98,10 @@ bool io_describe_format_time(t_cli_handle* cli) {
     ft_split_free(aliases);
   }
   opt->end();
+
+  if (!add_c_flag(cli))
+    return false;
+  if (!add_u_flag(cli))
+    return false;
   return cli->is_valid();
 }
