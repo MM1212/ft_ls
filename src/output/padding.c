@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:20:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 00:11:27 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:27:07 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <system.h>
 
 static void init(t_l_fmt_padding* p) {
- ft_bzero(p, sizeof(t_l_fmt_padding));
+  ft_bzero(p, sizeof(t_l_fmt_padding));
 }
 
 static void file_padding(t_file* file, t_l_fmt_padding* padding) {

@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 18:53:53 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:27:53 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@ static const char* time_style_options[] = {
   "birth,creation",
   NULL
 };
-
-
 
 static void cb(t_cli_option* opt, t_ft_ls* data) {
   if (ft_strcmp(opt->value, "atime") == 0)

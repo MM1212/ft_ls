@@ -6,13 +6,10 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 16:18:11 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 18:01:52 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:29:58 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define __USE_MISC
-#define __USE_XOPEN_EXTENDED
-#define __USE_XOPEN2K
 #include "file.h"
 #include <stdint.h>
 #include <libft.h>
@@ -254,9 +251,6 @@ void file_debug_print(t_file* file) {
     ft_printf(" -mode: %o\n", file->stat.st_mode);
     ft_printf(" -uid: %u\n", file->stat.st_uid);
     ft_printf(" -gid: %u\n", file->stat.st_gid);
-    // ft_printf(" -atime[%d]: %s", ctime(&file->stat.st_atime), file->stat.st_atime);
-    // ft_printf(" -mtime[%d]: %s", ctime(&file->stat.st_mtime), file->stat.st_mtime);
-    // ft_printf(" -ctime[%d]: %s", ctime(&file->stat.st_ctime), file->stat.st_ctime);
     ft_printf(" -perms: %.3s%.3s%.3s\n", file->perms.user, file->perms.group, file->perms.other);
   }
   if (file->symlinkd) {

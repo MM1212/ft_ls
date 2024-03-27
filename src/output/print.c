@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:42:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:24:49 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:27:04 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ void file_print(t_file* file, t_ft_ls* data) {
       data->settings.display.omit_owner
       )
       ft_printf(" ");
-    // SIZE, TODO: compute based on block-size
     ft_printf("%*d ", padding->size, file->stat.st_size);
     // DATE
     date_output_verbose_date(file, &data->settings);

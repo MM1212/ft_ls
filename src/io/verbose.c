@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:14:33 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 11:41:17 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:27:14 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,10 @@ static void help_print_option_description(char* desc, size_t size, bool pad) {
     idx--;
   size_t last_space = idx;
   while (last_space > 0 && !ft_isspace(desc[last_space]))
-      last_space--;
+    last_space--;
   size_t post_space = idx;
   while (post_space < len && !ft_isspace(desc[post_space]))
-      post_space++;
+    post_space++;
   if ((post_space - idx) < (idx - last_space))
     idx = post_space;
   else

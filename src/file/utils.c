@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:48:20 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 16:37:56 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:29:20 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ char* get_file_group_name(t_file* file) {
   return gr ? ft_strdup(gr->gr_name) : NULL;
 }
 
- // /bin/./ + X11 = /bin/X11/X11
 char* resolve_path(size_t count, ...) {
   va_list args;
   va_start(args, count);
@@ -61,17 +60,6 @@ char* resolve_path(size_t count, ...) {
       ft_strlcpy(pos, pos + 2, ft_strlen(pos) - 1);
     while ((pos = ft_strnstr(path, "//", ft_strlen(path))))
       ft_strlcpy(pos, pos + 1, ft_strlen(pos) - 1);
-    // remove all /../ if theres a previous valid directory (not / or .)
-    /* while ((pos = ft_strnstr(path, "/../", ft_strlen(path)))) {
-      char* start = pos;
-      while (start > path && *start != '/')
-        start--;
-      if (start > path && start[-1] != '.' && start[-1] != '/') {
-        ft_strlcpy(start, pos + 4, ft_strlen(pos) - 3);
-        continue;
-      }
-      ft_strlcpy(pos, pos + 3, ft_strlen(pos) - 2);
-    } */
     if (path[ft_strlen(path) - 1] != '/' && *part != '/')
       path = ft_strjoin_free(path, "/");
     else if (path[ft_strlen(path) - 1] == '/' && *part == '/')

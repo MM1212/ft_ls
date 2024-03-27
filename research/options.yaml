@@ -274,8 +274,3 @@ mandatory:
   - sort_time
 notes:
   - [get_term_line_length, https://github.com/wertarbyte/coreutils/blob/master/src/ls.c#L1606-L1614]
-
-missing:
-  - classify
-  - ind_style_file_type
-  - indicator_style

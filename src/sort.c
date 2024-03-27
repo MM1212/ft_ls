@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 11:49:36 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 21:56:01 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:26:40 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ static int sort2_wrapper(t_file** a, t_file** b, t_settings* settings) {
   return settings->sort.cmp(*a, *b, settings);
 }
 
- void reverse_sort(t_vector* files) {
+void reverse_sort(t_vector* files) {
   t_file* tmp, ** a, ** b;
   for (size_t i = 0; i < files->size / 2; i++) {
     a = files->at(files, i);

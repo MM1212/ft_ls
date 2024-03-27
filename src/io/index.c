@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:12:37 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 12:36:01 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:27:20 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,7 @@ int io_run(struct s_ls* data, int ac, char** av, bool* exit_request) {
     !io_describe_sort_options(handle) ||
     !io_describe_verbose_options(handle) ||
     !handle->parse(ac, av)
-  ) {
-    // if (DEBUG)
-    //   handle->print();
+    ) {
     handle->output_error();
     ft_fprintf(STDERR_FILENO, "Try '%s --help' for more information.\n", av[0]);
     return IO_EXIT_MAJOR_ERROR;
