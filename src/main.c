@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 20:37:37 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 23:52:11 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,22 @@
 
 t_ft_ls* g_ls_data = NULL;
 
+static int dir_cache_hash(const t_file* file) {
+  return file->id;
+}
+
+static int dir_cache_cmp(const t_file* a, const t_file* b) {
+  return a->id - b->id;
+}
+
 static bool init(t_ft_ls* data, char** env) {
   ft_bzero(data, sizeof(t_ft_ls));
   data->io = cli_begin("ft_ls", data);
   data->colors = colors_registry_create(env);
   data->settings.is_tty = isatty(STDOUT_FILENO);
+  data->dir_cache = hashtable_create(30, (t_hashtable_hash)dir_cache_hash, (t_hashtable_cmp)dir_cache_cmp, NULL);
   g_ls_data = data;
-  if (!data->io || !data->colors)
+  if (!data->io || !data->colors || !data->dir_cache)
     return false;
   return true;
 }

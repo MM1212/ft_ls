@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:20:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 20:40:09 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 00:11:27 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,18 @@ t_l_fmt_padding get_padding(t_list* files, t_settings* settings) {
   return padding;
 }
 
+static void file_padding2_wrapper(t_file* file, size_t idx, t_l_fmt_padding* padding)
+{
+  (void)idx;
+  file_padding(file, padding);
+}
+
 t_l_fmt_padding get_padding2(t_vector* files, t_settings* settings) {
   t_l_fmt_padding padding;
   init(&padding);
   padding.settings = settings;
   if (settings->format.type != FORMAT_LONG)
     return padding;
-  files->foreach(files, (t_vector_foreach_f)file_padding, &padding);
+  files->foreach(files, (t_vector_foreach_f)file_padding2_wrapper, &padding);
   return padding;
 }

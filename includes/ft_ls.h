@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 12:58:29 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 11:49:54 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 21:46:58 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <colors.h>
 #include <io.h>
 #include <padding.h>
+#include <lxt/dst/hashtable.h>
 
 typedef enum e_exit_status {
   EXIT_OK,
@@ -34,6 +35,7 @@ struct s_ls {
   t_l_fmt_padding padding;
   bool first_batch_print;
   t_exit_status exit_status;
+  t_hashtable* dir_cache;
 };
 
 void ft_ls_destroy(t_ft_ls* data);

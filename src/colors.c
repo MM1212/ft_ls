@@ -6,13 +6,18 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:31:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 12:16:43 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 23:09:37 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "colors.h"
 #include <stdlib.h>
 #include <libft.h>
+
+static void double_free(void* a, void* b) {
+  free(a);
+  free(b);
+}
 
 t_colors_registry* colors_registry_create(char** env)
 {
@@ -26,7 +31,9 @@ t_colors_registry* colors_registry_create(char** env)
   if (!ls_colors)
     return NULL;
   t_colors_registry* rt = hashtable_create(\
-    256, hashtable_joaat_hash, free \
+    256, (t_hashtable_hash)hashtable_joaat_hash, \
+    (t_hashtable_cmp)ft_strcmp, \
+    (t_hashtable_delete)double_free \
   );
   if (!rt)
     return NULL;
@@ -49,9 +56,9 @@ t_colors_registry* colors_registry_create(char** env)
       ft_split_free(colors);
       return NULL;
     }
-
+    free(color[1]);
     rt->add(rt, color[0], code);
-    ft_split_free(color);
+    free(color);
   }
   ft_split_free(colors);
   return rt;

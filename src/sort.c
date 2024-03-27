@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 11:49:36 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 20:45:08 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 22:50:30 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,12 +120,19 @@ void sort_files(t_list* files, t_settings* settings) {
     ft_lstsort(files, (int (*)(void*, void*))sort_by_reverse);
 }
 
-void sort_files2(t_vector* files, t_settings* settings) {
+static int sort2_wrapper(t_file** a, t_file** b, t_settings* settings) {
+  return settings->sort.cmp(*a, *b, settings);
+}
+
+t_vector *sort_files2(t_vector* files, t_settings* settings) {
   if (settings->sort.type == SORT_NONE)
-    return;
+    return NULL;
 
   choose_sort_cmp(settings);
-  files->sort2(files, (t_vector_cmp2_f)settings->sort.cmp, settings);
-  if (settings->sort.reverse)
-    files->sort(files, (t_vector_cmp_f)sort_by_reverse);
+  t_vector* sorted = files->sort3(files, (t_vector_cmp2_f)sort2_wrapper, settings, NULL);
+  if (settings->sort.reverse) {
+    settings->sort.cmp = (t_settings_sort_cmp)sort_by_reverse;
+    files->sort3(files, (t_vector_cmp2_f)sort2_wrapper, settings, sorted);
+  }
+  return sorted;
 }

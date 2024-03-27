@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:01:44 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 21:36:01 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 00:12:35 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,8 @@ char* resolve_path(size_t count, ...) {
 }
 
 static void add_file_block(t_file* file, uint32_t* total) {
-  if (!file->statd)
-    file_stat(file);
+  if (!file->statd && !file_stat(file))
+    return;
   *total += FS_BLOCK_SIZE(file->stat.st_blocks);
 }
 
@@ -120,8 +120,15 @@ uint32_t get_total_blocks(t_list* files) {
   return total;
 }
 
+static void add_file_block2(t_file* file, size_t idx, uint32_t* total) {
+  (void)idx;
+  if (!file->statd && !file_stat(file))
+    return;
+  *total += FS_BLOCK_SIZE(file->stat.st_blocks);
+}
+
 uint32_t get_total_blocks2(t_vector* files) {
   uint32_t total = 0;
-  files->foreach(files, (t_vector_foreach_f)add_file_block, &total);
+  files->foreach(files, (t_vector_foreach_f)add_file_block2, &total);
   return total;
 }

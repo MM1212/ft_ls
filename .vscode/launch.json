@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceRoot}/ft_ls",
-      "args": ["-R"],
+      "args": ["-RLl"],
       "stopAtEntry": false,
       "cwd": "${workspaceRoot}",
       "environment": [],

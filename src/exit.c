@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:45:42 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 11:52:18 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/26 23:13:14 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void ft_ls_destroy(t_ft_ls* data) {
   data->colors->destroy(data->colors);
   ft_lstclear(&data->file_entries, (void (*)(void*))file_free);
   ft_lstclear(&data->dir_entries, (void (*)(void*))file_free);
+  data->dir_cache->destroy(data->dir_cache);
 }
 void ft_exit(t_ft_ls* data, int status, char* message)
 {
