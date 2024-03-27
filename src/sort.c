@@ -6,12 +6,13 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 11:49:36 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 22:50:30 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:15:20 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <time.h>
 #include "sort.h"
+#include <ft_ls.h>
 
 int sort_by_ascii(t_file* a, t_file* b) {
   return ft_strcmp(a->name, b->name);
@@ -66,12 +67,6 @@ int sort_by_size(t_file* a, t_file* b) {
   return b->size - a->size;
 }
 
-int sort_by_reverse(t_file* a, t_file* b) {
-  (void)a;
-  (void)b;
-  return -1;
-}
-
 int sort_by_version(t_file* a, t_file* b) {
   bool a_is_version = ft_isnbr(a->name);
   bool b_is_version = ft_isnbr(b->name);
@@ -110,29 +105,28 @@ static void choose_sort_cmp(t_settings* settings) {
   }
 }
 
-void sort_files(t_list* files, t_settings* settings) {
-  if (settings->sort.type == SORT_NONE)
-    return;
-  choose_sort_cmp(settings);
-  if (settings->sort.cmp)
-    ft_lstsort2(files, (t_lst_cmp2)settings->sort.cmp, settings);
-  if (settings->sort.reverse)
-    ft_lstsort(files, (int (*)(void*, void*))sort_by_reverse);
-}
-
 static int sort2_wrapper(t_file** a, t_file** b, t_settings* settings) {
   return settings->sort.cmp(*a, *b, settings);
 }
 
-t_vector *sort_files2(t_vector* files, t_settings* settings) {
+static void reverse_sort(t_vector* files) {
+  t_file* tmp, ** a, ** b;
+  for (size_t i = 0; i < files->size / 2; i++) {
+    a = files->at(files, i);
+    b = files->at(files, files->size - i - 1);
+    tmp = *a;
+    *a = *b;
+    *b = tmp;
+  }
+}
+
+t_vector* sort_files2(t_vector* files, t_settings* settings) {
   if (settings->sort.type == SORT_NONE)
     return NULL;
 
   choose_sort_cmp(settings);
   t_vector* sorted = files->sort3(files, (t_vector_cmp2_f)sort2_wrapper, settings, NULL);
-  if (settings->sort.reverse) {
-    settings->sort.cmp = (t_settings_sort_cmp)sort_by_reverse;
-    files->sort3(files, (t_vector_cmp2_f)sort2_wrapper, settings, sorted);
-  }
+  if (settings->sort.reverse)
+    reverse_sort(sorted);
   return sorted;
 }

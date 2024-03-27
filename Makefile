@@ -43,12 +43,13 @@ CYAN = \033[96m
 ORANGE = \033[0;33m
 RESET = \033[0m
 
+# $(if $(DEBUG_ON),-g -fsanitize=address,undefined,)
 CFLAGS = \
 		$(INCLUDES) \
 		-MT $@ -MMD -MP -MF $(DEP_DIR)/$*.d \
 		-Wall -Wextra -Werror \
 		-DVERSION="\"$$(cat VERSION)\"" \
-		$(if $(DEBUG_ON),-g -fsanitize=address,undefined,) \
+		-g -gdwarf-2 -g3 \
 		$(if $(DEBUG_ON),-DDEBUG,) \
 		-DCOLORS_RED="\"$(RED)\"" \
 		-DCOLORS_GREEN="\"$(GREEN)\"" \

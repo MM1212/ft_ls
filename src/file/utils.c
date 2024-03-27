@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:48:20 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 20:45:37 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 16:37:56 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,53 @@ char* get_file_group_name(t_file* file) {
     return NULL;
   struct group* gr = getgrgid(file->stat.st_gid);
   return gr ? ft_strdup(gr->gr_name) : NULL;
+}
+
+ // /bin/./ + X11 = /bin/X11/X11
+char* resolve_path(size_t count, ...) {
+  va_list args;
+  va_start(args, count);
+  char* path = NULL;
+  for (size_t i = 0; i < count; i++) {
+    char* part = va_arg(args, char*);
+    if (ft_str_endswith(part, "X11"))
+      ft_fprintf(2, "%s|%s\n", path, part);
+    if (!part || !*part)
+      continue;
+
+    if (!path) {
+      path = ft_strdup(part);
+      continue;
+    }
+    if (ft_str_startswith(part, "/")) {
+      free(path);
+      path = ft_strdup(part);
+      continue;
+    }
+    char* pos;
+    while ((pos = ft_strnstr(path, "/./", ft_strlen(path))))
+      ft_strlcpy(pos, pos + 2, ft_strlen(pos) - 1);
+    while ((pos = ft_strnstr(path, "//", ft_strlen(path))))
+      ft_strlcpy(pos, pos + 1, ft_strlen(pos) - 1);
+    // remove all /../ if theres a previous valid directory (not / or .)
+    /* while ((pos = ft_strnstr(path, "/../", ft_strlen(path)))) {
+      char* start = pos;
+      while (start > path && *start != '/')
+        start--;
+      if (start > path && start[-1] != '.' && start[-1] != '/') {
+        ft_strlcpy(start, pos + 4, ft_strlen(pos) - 3);
+        continue;
+      }
+      ft_strlcpy(pos, pos + 3, ft_strlen(pos) - 2);
+    } */
+    if (path[ft_strlen(path) - 1] != '/' && *part != '/')
+      path = ft_strjoin_free(path, "/");
+    else if (path[ft_strlen(path) - 1] == '/' && *part == '/')
+      part++;
+    path = ft_strjoin_free(path, part);
+    if (!path)
+      break;
+  }
+  va_end(args);
+  return path;
 }

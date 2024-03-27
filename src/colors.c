@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:31:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 23:09:37 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 16:56:08 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,11 @@ char* get_color_for_file(
   case FILE_BLOCK_SPECIAL: return reg->get(reg, "bd");
   case FILE_CHARACTER_SPECIAL: return reg->get(reg, "cd");
   case FILE_DIRECTORY: return reg->get(reg, "di");
-  case FILE_SYMLINK: return reg->get(reg, "ln");
+  case FILE_SYMLINK: {
+    if (file->symlinkd && !file->symlink)
+      return reg->get(reg, "or");
+    return reg->get(reg, "ln");
+  };
   case FILE_FIFO: return reg->get(reg, "pi");
   case FILE_SOCKET: return reg->get(reg, "so");
   default: break;

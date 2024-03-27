@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:42:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 16:20:05 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 16:57:25 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 
 void file_print(t_file* file, t_ft_ls* data) {
   t_l_fmt_padding* padding = &data->padding;
+  if (data->settings.format.type == FORMAT_LONG && !file_stat(file))
+    return;
   if (!data->first_batch_print) {
     switch (data->settings.format.type) {
     case FORMAT_LONG:
@@ -86,7 +88,7 @@ void file_print(t_file* file, t_ft_ls* data) {
   // file name
   char* color_code = get_color_for_file(file, data->colors, &data->settings);
   ft_printf("%s%s%s", color_code ? color_code : "", file->name, color_code ? COLORS_RESET : "");
-  if (is_format_long && file->type == FILE_SYMLINK) {
+  if (is_format_long && file->type == FILE_SYMLINK && file->symlinkd && file->symlink) {
     char* color_code = get_color_for_symlink(file, data->colors, &data->settings);
     ft_printf(" -> %s%s%s", color_code ? color_code : "", file->symlink, color_code ? COLORS_RESET : "");
   }

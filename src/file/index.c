@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 16:18:11 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 20:31:56 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:01:52 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <linux/stat.h>
 #include <ft_ls.h>
+#include <time.h>
 
 t_file_type  get_file_type_by_dirent(uint8_t flag) {
   switch (flag) {
@@ -63,98 +64,130 @@ static void file_readlink(t_file* file) {
   char buf[4098];
   ssize_t len = readlink(file->full_path, buf, 4098);
   if (len == -1) {
-    ft_show_error(g_ls_data, EXIT_MINOR, false, true, "cannot read symbolic link '%s'", file->full_path);
+    ft_show_error(EXIT_MINOR, false, true, "cannot read symbolic link '%s'", file->full_path);
     return;
   }
   buf[len] = '\0';
   char* link = ft_strdup(buf);
-  char* link_path = ft_str_startswith(buf, "/") ? ft_strdup(buf) : ft_strjoin(2, file->path, buf);
+  char* link_path = resolve_path(2, file->path, buf);
   if (!link || !link_path) {
     free(link);
     free(link_path);
-    ft_show_error(g_ls_data, EXIT_FATAL, false, false, "cannot allocate memory");
+    ft_show_error(EXIT_FATAL, false, false, "cannot allocate memory");
     return;
   }
-  file->symlinkd = true;
-  file->symlink = link;
-  if (stat(link_path, &file->lstat) == -1) {
-    ft_show_error(g_ls_data, EXIT_MINOR, false, true, "cannot access '%s'", link);
-    free(file->symlink);
-    free(link_path);
-    file->symlink = NULL;
-    file->symlinkd = false;
-    return;
+  if (g_ls_data->settings.filter.dereference_links || g_ls_data->settings.filter.dereference_links_cli) {
+    if (stat(link_path, &file->stat) == -1) {
+      ft_show_error(EXIT_MINOR, false, true, "cannot access '%s'", file->display_path);
+      free(link);
+      free(link_path);
+      file->symlinkd = true;
+      file->symlink = NULL;
+      return;
+    }
+    free(file->full_path);
+    file->id = file->stat.st_ino;
+    file->full_path = link_path;
+    file->statd = true;
+    file->size = file->stat.st_size;
+    file->type = get_file_type_by_stat(file->stat.st_mode);
+    free(file->owner);
+    free(file->group);
+    file->owner = get_file_owner_name(file);
+    file->group = get_file_group_name(file);
+    file_build_permissions(file);
+    free(link);
   }
-  free(link_path);
-  file->ltype = get_file_type_by_dirent(file->lstat.st_mode);
+  else {
+    file->symlinkd = true;
+    file->symlink = link;
+    file->symlink_path = link_path;
+    if (stat(link_path, &file->lstat) == -1) {
+      ft_show_error(EXIT_MINOR, false, true, "cannot access '%s'", file->display_path);
+      free(file->symlink);
+      free(file->symlink_path);
+      file->symlink = NULL;
+      file->symlink_path = NULL;
+      file->symlinkd = false;
+      return;
+    }
+    file->ltype = get_file_type_by_dirent(file->lstat.st_mode);
+  }
 }
 
 static t_file* new_file(
-  const char* input,
+  t_file* directory,
   const char* name,
-  const char* path,
+  const char* full_path,
   size_t id,
   t_file_type type,
-  t_file* ref
+  t_file* ref,
+  bool resolve_symlink
 ) {
   t_file* file = ref ? ref : ft_calloc(1, sizeof(t_file));
   if (!file)
     return NULL;
   ft_bzero(file, sizeof(t_file));
   file->id = id;
-  file->input = ft_strdup(input);
   file->name = ft_strdup(name);
-  file->path = ft_strdup(path);
-  if (!ft_str_endswith(file->path, "/")) {
-    char* tmp = ft_strjoin(2, file->path, "/");
-    free(file->path);
-    file->path = tmp;
-  }
-  file->full_path = ft_strjoin(2, file->path, file->name);
-  if (!file->full_path || !file->name || !file->path) {
+  file->full_path = ft_strdup(full_path);
+  file->type = type;
+  file->display_path = !directory ? ft_strdup(name) : resolve_path(2, directory->display_path, name);
+  if (!full_path)
+    file->full_path = resolve_path(2, directory->full_path, name);
+  if (!file->name || !file->full_path || !file->display_path) {
     file_free(file);
+    ft_show_error(EXIT_FATAL, true, false, "cannot allocate memory");
+  }
+  file->path = ft_strrchr(file->full_path, '/');
+  if (!file->path)
+    file->path = ft_strdup("./");
+  else
+    file->path = ft_substr(file->full_path, 0, file->path - file->full_path + 1);
+  if (!file->path) {
+    file_free(file);
+    ft_show_error(EXIT_FATAL, true, false, "cannot allocate memory");
     return NULL;
   }
-  file->type = type;
-  if (file->type == FILE_SYMLINK)
+  if (type == FILE_SYMLINK && resolve_symlink)
     file_readlink(file);
   return file;
 }
 
+
 t_file* file_from_dir_entry(
-  const char* name,
-  const char* path,
+  t_file* directory,
   struct dirent* entry,
   t_file* ref
 ) {
   return new_file(
-    name,
-    name, path,
+    directory,
+    entry->d_name, NULL,
     entry->d_ino,
     get_file_type_by_dirent(entry->d_type),
-    ref
+    ref,
+    true
   );
 }
 
-t_file* file_from_stat(const char* full_path, t_file* ref) {
+t_file* file_from_stat(const char* full_path, t_file* ref, bool resolve_symlink) {
   struct stat stat;
   if (lstat(full_path, &stat) == -1) {
-    ft_show_error(g_ls_data, EXIT_MINOR, false, true, "cannot access '%s'", full_path);
+    ft_show_error(EXIT_MINOR, false, true, "cannot access '%s'", full_path);
     return NULL;
   }
-  const char* folder_slash = ft_strrchr(full_path, '/');
-  const char* name = folder_slash && (*(folder_slash + 1) != '\0') ? folder_slash + 1 : full_path;
-  char* path = folder_slash && (*(folder_slash + 1) != '\0') ? ft_substr(full_path, 0, folder_slash - full_path) : ft_strdup("./");
   t_file* file = new_file(
-    full_path,
-    name, path,
+    NULL,
+    full_path, full_path,
     stat.st_ino,
     get_file_type_by_stat(stat.st_mode),
-    ref
+    ref,
+    resolve_symlink
   );
-  free(path);
   if (!file)
     return NULL;
+  if (file->statd)
+    return file;
   file->statd = true;
   file->stat = stat;
   file->size = stat.st_size;
@@ -168,8 +201,10 @@ bool file_stat(t_file* file)
 {
   if (file->statd)
     return true;
-  if (lstat(file->full_path, &file->stat) == -1)
+  if (lstat(file->full_path, &file->stat) == -1) {
+    ft_show_error(EXIT_MINOR, false, true, "cannot access '%s'", file->from_link, file->full_path);
     return false;
+  }
   file->statd = true;
   file->size = file->stat.st_size;
   file->owner = get_file_owner_name(file);
@@ -187,51 +222,30 @@ t_file* file_from_symlink_view(t_file* link, t_file* file) {
   link->statd = true;
   link->size = file->lstat.st_size;
   link->name = file->symlink;
+  link->display_path = file->display_path;
   link->type = get_file_type_by_stat(file->lstat.st_mode);
   file_build_permissions(link);
   return link;
 }
 
-t_file* file_from_symlink(t_file* file, t_file* ref) {
-  if (!file->symlinkd)
-    return NULL;
-  char* full_path;
-
-  if (*file->symlink == '/')
-    full_path = ft_strdup(file->symlink);
-  else
-    full_path = ft_strjoin(2, file->path, file->symlink);
-  if (!full_path)
-    return NULL;
-  t_file* link = file_from_stat(full_path, ref);
-  if (!link) {
-    free(full_path);
-    return NULL;
-  }
-  free(link->name);
-  link->name = ft_strdup(file->name);
-  free(full_path);
-  return link;
-}
-
-
 void file_cleanup(t_file* file) {
-  free(file->input);
+  free(file->display_path);
   free(file->name);
   free(file->path);
   free(file->full_path);
   free(file->symlink);
+  free(file->symlink_path);
   free(file->owner);
   free(file->group);
 }
 
 void file_debug_print(t_file* file) {
-  ft_printf("%s:\n", file->name);
+  ft_printf("%s:\n", file->display_path);
   ft_printf(" -id: %u\n", file->id);
   ft_printf(" -name: %s\n", file->name);
   ft_printf(" -path: %s\n", file->path);
   ft_printf(" -full_path: %s\n", file->full_path);
-  ft_printf(" -input: %s\n", file->input);
+  ft_printf(" -input: %s\n", file->display_path);
   ft_printf(" -type: %c\n", file->type);
   if (file->statd) {
     ft_printf(" -owner: %s\n", file->owner);
@@ -240,13 +254,14 @@ void file_debug_print(t_file* file) {
     ft_printf(" -mode: %o\n", file->stat.st_mode);
     ft_printf(" -uid: %u\n", file->stat.st_uid);
     ft_printf(" -gid: %u\n", file->stat.st_gid);
-    ft_printf(" -atime: %d\n", file->stat.st_atime);
-    ft_printf(" -mtime: %d\n", file->stat.st_mtime);
-    ft_printf(" -ctime: %d\n", file->stat.st_ctime);
+    // ft_printf(" -atime[%d]: %s", ctime(&file->stat.st_atime), file->stat.st_atime);
+    // ft_printf(" -mtime[%d]: %s", ctime(&file->stat.st_mtime), file->stat.st_mtime);
+    // ft_printf(" -ctime[%d]: %s", ctime(&file->stat.st_ctime), file->stat.st_ctime);
     ft_printf(" -perms: %.3s%.3s%.3s\n", file->perms.user, file->perms.group, file->perms.other);
   }
   if (file->symlinkd) {
     ft_printf(" -symlink: %s\n", file->symlink);
+    ft_printf(" -symlink_path: %s\n", file->symlink_path);
     ft_printf(" -ltype: %c\n", file->ltype);
     ft_printf(" -lmode: %o\n", file->lstat.st_mode);
     ft_printf(" -luid: %u\n", file->lstat.st_uid);
@@ -261,4 +276,3 @@ void file_free(t_file* file) {
   file_cleanup(file);
   free(file);
 }
-

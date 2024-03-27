@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:45:42 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 23:13:14 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:52:37 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ void ft_exit(t_ft_ls* data, int status, char* message)
 }
 
 void ft_show_error(
-  t_ft_ls* data,
   t_exit_status status, bool quit, bool sys_call,
   char* message, ...
 ) {
@@ -45,8 +44,8 @@ void ft_show_error(
     perror(buf);
   else
     ft_fprintf(2, "%s\n", buf);
-  if ((data->exit_status == EXIT_OK || status != EXIT_OK))
-    data->exit_status = status;
+  if ((g_ls_data->exit_status == EXIT_OK || status != EXIT_OK))
+    g_ls_data->exit_status = status;
   if (quit)
-    ft_exit(data, status, NULL);
+    ft_exit(g_ls_data, status, NULL);
 }

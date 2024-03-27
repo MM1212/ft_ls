@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 15:08:34 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 20:29:58 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 17:05:33 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ struct s_file_permissions
 struct s_file
 {
   size_t id;
-  char* input;
-  char* name;
-  char* path;
-  char* full_path;
+  char* name; // file name
+  char* display_path; // display path (dir only)
+  char* path; // relative path to file
+  char* full_path; // full path to file (path + name)
   t_file_type type;
 
   // stat, only used in long format
@@ -64,18 +64,23 @@ struct s_file
   char* group;
   struct s_file_permissions perms;
   // followd a symlink
+  bool from_link;
   bool symlinkd;
   char* symlink;
+  char* symlink_path;
   struct stat lstat;
   t_file_type ltype;
 
   t_file* parent;
 };
 
-t_file* file_from_dir_entry(const char* name, const char* path, struct dirent* entry, t_file* ref);
-t_file* file_from_stat(const char* path, t_file* ref);
+t_file* file_from_dir_entry(
+  t_file* directory,
+  struct dirent* entry,
+  t_file* ref
+);
+t_file* file_from_stat(const char* path, t_file* ref, bool follow_symlink);
 t_file* file_from_symlink_view(t_file* dst, t_file* src);
-t_file* file_from_symlink(t_file* file, t_file* ref);
 bool file_stat(t_file* file);
 void file_cleanup(t_file* file);
 void file_debug_print(t_file* file);
@@ -86,3 +91,4 @@ t_file_type  get_file_type_by_dirent(uint8_t flag);
 t_file_type get_file_type_by_stat(uint32_t mode);
 char* get_file_owner_name(t_file* file);
 char* get_file_group_name(t_file* file);
+char* resolve_path(size_t count, ...);

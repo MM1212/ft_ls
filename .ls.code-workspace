@@ -56,7 +56,10 @@
       "sort.h": "c",
       "date.h": "c",
       "system.h": "c",
-      "vt_internal.h": "c"
+      "vt_internal.h": "c",
+      "istream": "c",
+      "typeinfo": "c",
+      "vector.h": "c"
     },
     "files.exclude": {
       "**/*.o": false,

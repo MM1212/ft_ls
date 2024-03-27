@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/24 22:46:25 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:02:50 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static bool (*io_describe_sorts[])(t_cli_handle*) = {
   io_describe_sort_time,
   io_describe_sort_size,
   io_describe_sort_version,
+  io_describe_sort_reverse,
   // io_describe_sort_width,
 };
 

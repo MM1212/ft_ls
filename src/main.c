@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 23:52:11 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 17:53:55 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,25 +50,14 @@ static void parse_entries(t_ft_ls* data, char** entries) {
   t_list* base = NULL;
   uint32_t i;
   for (i = 0; entries[i]; i++) {
-    t_file* file = file_from_stat(entries[i], NULL);
+    t_file* file = file_from_stat(entries[i], NULL, true);
     if (!file)
-    {
-      ft_show_error(data, EXIT_MINOR, false, true, "cannot access '%s'", entries[i]);
       continue;
-    }
-    if (file->type == FILE_SYMLINK &&
-      (data->settings.filter.dereference_links_cli || data->settings.filter.dereference_links)) {
-      t_file* link = file_from_symlink(file, NULL);
-      if (link) {
-        file_free(file);
-        file = link;
-      }
-    }
     ft_lstadd_back(&base, ft_lstnew(file));
   }
   if (!base)
     return;
-  ft_lstsort(base, (int (*)(void* a, void* b))sort_entries);
+  base = ft_lstsort(base, (int (*)(void* a, void* b))sort_entries);
   data->settings.print_dir_name = data->settings.filter.recursive || i > 1;
   if (data->settings.filter.list_directories) {
     data->file_entries = base;

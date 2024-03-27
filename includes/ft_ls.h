@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 12:58:29 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 21:46:58 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:52:33 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ struct s_ls {
 void ft_ls_destroy(t_ft_ls* data);
 void ft_exit(t_ft_ls* data, int status, char* message);
 void ft_show_error(
-  t_ft_ls* data,
   t_exit_status status, bool quit, bool sys_call,
   char* message, ...
 );
