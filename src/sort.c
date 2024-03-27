@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 11:49:36 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 18:15:20 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:55:43 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,10 +106,12 @@ static void choose_sort_cmp(t_settings* settings) {
 }
 
 static int sort2_wrapper(t_file** a, t_file** b, t_settings* settings) {
+  if (settings->sort.reverse)
+    return settings->sort.cmp(*b, *a, settings);
   return settings->sort.cmp(*a, *b, settings);
 }
 
-static void reverse_sort(t_vector* files) {
+ void reverse_sort(t_vector* files) {
   t_file* tmp, ** a, ** b;
   for (size_t i = 0; i < files->size / 2; i++) {
     a = files->at(files, i);
@@ -126,7 +128,5 @@ t_vector* sort_files2(t_vector* files, t_settings* settings) {
 
   choose_sort_cmp(settings);
   t_vector* sorted = files->sort3(files, (t_vector_cmp2_f)sort2_wrapper, settings, NULL);
-  if (settings->sort.reverse)
-    reverse_sort(sorted);
   return sorted;
 }

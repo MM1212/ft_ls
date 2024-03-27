@@ -5,6 +5,7 @@ RESET='\033[0m'
 DIR="$HOME/42/projects/ft_ls/"
 
 #make -k
+echo $@
 "time" -p ls $@ > $DIR.ls.tmp 2> $DIR.ls.time.tmp
 "time" -p $DIR"ft_ls" $@ > $DIR.ft_ls.tmp 2> $DIR.ft_ls.time.tmp
 echo "Finished running ls and ft_ls, now comparing outputs..."

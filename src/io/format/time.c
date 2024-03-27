@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/26 11:39:43 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:53:53 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static void u_cb(t_cli_option* opt, t_ft_ls* data) {
 static bool add_c_flag(t_cli_handle* cli) {
   t_cli_option_builder* opt = cli->new_option(
     "time_ctime",
-    "with -lt: sort by, and show, ctime (time of last\
+    "with -lc: sort by, and show, ctime (time of last\
  modification of file status information);\n\
 with -l: show ctime and sort by name;\n\
 otherwise: sort by ctime, newest first",
@@ -62,7 +62,7 @@ false
 static bool add_u_flag(t_cli_handle* cli) {
   t_cli_option_builder* opt = cli->new_option(
     "time_atime",
-    "with -lt: sort by, and show, access time;\n\
+    "with -lu: sort by, and show, access time;\n\
 with -l: show access time and sort by name;\n\
 otherwise: sort by access time, newest first",
 false

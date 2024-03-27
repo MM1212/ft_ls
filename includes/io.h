@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:09:51 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 18:02:49 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 19:01:55 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,3 +61,5 @@ bool io_describe_sort_size(t_cli_handle *cli);
 bool io_describe_sort_version(t_cli_handle *cli);
 bool io_describe_sort_width(t_cli_handle *cli);
 bool io_describe_sort_reverse(t_cli_handle *cli);
+void io_manage_sorting_time(struct s_ls* data);
+

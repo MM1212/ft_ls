@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 17:53:55 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 19:13:12 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ static void manage_settings(t_ft_ls* data) {
   if (data->settings.format.type == FORMAT_NONE) {
     data->settings.format.type = data->settings.is_tty ? FORMAT_HORIZONTAL : FORMAT_SINGLE_COLUMN;
   }
+  io_manage_sorting_time(data);
 }
 
 static void parse_entries(t_ft_ls* data, char** entries) {
