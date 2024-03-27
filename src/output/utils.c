@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:01:44 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 15:58:26 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:22:04 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,27 +72,52 @@ t_vector* get_files_from_dir(\
   return files;
 }
 
-static void add_file_block(t_file* file, uint32_t* total) {
-  if (!file->statd && !file_stat(file))
-    return;
-  *total += FS_BLOCK_SIZE(file->stat.st_blocks);
-}
-
-uint32_t get_total_blocks(t_list* files) {
-  uint32_t total = 0;
-  ft_lstiter2(files, (t_lst_iter2)add_file_block, &total);
-  return total;
-}
-
-static void add_file_block2(t_file* file, size_t idx, uint32_t* total) {
+static void add_file_block(t_file* file, size_t idx, uint32_t* total) {
   (void)idx;
   if (!file->statd && !file_stat(file))
     return;
   *total += FS_BLOCK_SIZE(file->stat.st_blocks);
 }
 
-uint32_t get_total_blocks2(t_vector* files) {
+uint32_t get_total_blocks(t_vector* files) {
   uint32_t total = 0;
-  files->foreach(files, (t_vector_foreach_f)add_file_block2, &total);
+  files->foreach(files, (t_vector_foreach_f)add_file_block, &total);
   return total;
+}
+
+void print_indicator_style(t_file* file, t_settings* settings) {
+  switch (settings->format.indicator_style) {
+  case INDICATOR_STYLE_NONE:
+    break;
+  case INDICATOR_STYLE_SLASH:
+    if (file->type == FILE_DIRECTORY)
+      ft_printf("/");
+    break;
+  case INDICATOR_STYLE_FILE_TYPE:
+  case INDICATOR_STYLE_CLASSIFY:
+    switch (file->type) {
+    case FILE_DIRECTORY:
+      ft_printf("/");
+      break;
+    case FILE_FIFO:
+      ft_printf("|");
+      break;
+    case FILE_SOCKET:
+      ft_printf("=");
+      break;
+    case FILE_SYMLINK:
+      ft_printf("@");
+      break;
+    case FILE_REGULAR: {
+      if (settings->format.indicator_style != INDICATOR_STYLE_CLASSIFY)
+        break;
+      if (file_stat(file) && file->perms.user[2] == 'x')
+        ft_printf("*");
+      break;
+    }
+    default:
+      break;
+    }
+    break;
+  }
 }

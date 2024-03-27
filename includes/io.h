@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:09:51 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 19:01:55 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:15:49 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ bool io_describe_format_horizontal(t_cli_handle *cli);
 bool io_describe_format_vertical(t_cli_handle *cli);
 bool io_describe_format_time(t_cli_handle* cli);
 bool io_describe_format_time_style(t_cli_handle* cli);
+bool io_describe_format_indicator_style(t_cli_handle* cli);
 /* DISPLAY */
 bool io_describe_display_options(t_cli_handle *cli);
 bool io_describe_display_color(t_cli_handle *cli);
@@ -52,6 +53,7 @@ bool io_describe_display_inode(t_cli_handle* cli);
 bool io_describe_display_numeric_ids(t_cli_handle* cli);
 bool io_describe_display_omits(t_cli_handle* cli);
 bool io_describe_display_full_time(t_cli_handle* cli);
+bool io_describe_display_size(t_cli_handle* cli);
 /* SORT */
 bool io_describe_sort_options(t_cli_handle *cli);
 bool io_describe_sort_none(t_cli_handle *cli);

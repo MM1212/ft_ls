@@ -59,7 +59,8 @@
       "vt_internal.h": "c",
       "istream": "c",
       "typeinfo": "c",
-      "vector.h": "c"
+      "vector.h": "c",
+      "block_size.h": "c"
     },
     "files.exclude": {
       "**/*.o": false,

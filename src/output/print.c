@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:42:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 16:57:25 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:24:49 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,15 @@ void file_print(t_file* file, t_ft_ls* data) {
   // file name
   char* color_code = get_color_for_file(file, data->colors, &data->settings);
   ft_printf("%s%s%s", color_code ? color_code : "", file->name, color_code ? COLORS_RESET : "");
+  print_indicator_style(file, &data->settings);
   if (is_format_long && file->type == FILE_SYMLINK && file->symlinkd && file->symlink) {
-    char* color_code = get_color_for_symlink(file, data->colors, &data->settings);
-    ft_printf(" -> %s%s%s", color_code ? color_code : "", file->symlink, color_code ? COLORS_RESET : "");
+    t_file link;
+
+    if (file_from_symlink_view(&link, file)) {
+      char* color_code = get_color_for_file(&link, data->colors, &data->settings);
+      ft_printf(" -> %s%s%s", color_code ? color_code : "", file->symlink, color_code ? COLORS_RESET : "");
+      print_indicator_style(&link, &data->settings);
+    }
   }
   data->first_batch_print = false;
 }

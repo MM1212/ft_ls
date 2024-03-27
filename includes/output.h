@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:00:16 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 14:42:28 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:22:06 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,5 @@ t_vector* get_files_from_dir(
   void (*foreach_f)(t_file* file, void* data),
   void* data
 );
-uint32_t get_total_blocks(t_list* files);
-uint32_t get_total_blocks2(t_vector* files);
+uint32_t get_total_blocks(t_vector* files);
+void print_indicator_style(t_file* file, t_settings* settings);

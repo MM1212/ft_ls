@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 11:49:36 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 18:55:43 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 21:56:01 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ static int sort2_wrapper(t_file** a, t_file** b, t_settings* settings) {
 
 t_vector* sort_files2(t_vector* files, t_settings* settings) {
   if (settings->sort.type == SORT_NONE)
-    return NULL;
+    return files;
 
   choose_sort_cmp(settings);
   t_vector* sorted = files->sort3(files, (t_vector_cmp2_f)sort2_wrapper, settings, NULL);

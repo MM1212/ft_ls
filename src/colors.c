@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:31:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 16:56:08 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:24:45 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ char* get_color_for_file(
     settings->display.color == SETTINGS_COLOR_NEVER ||
     (settings->display.color == SETTINGS_COLOR_AUTO && !settings->is_tty))
     return NULL;
-
 
   switch (file->type) {
   case FILE_BLOCK_SPECIAL: return reg->get(reg, "bd");

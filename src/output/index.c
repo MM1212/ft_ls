@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:31:13 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 16:57:51 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 21:56:17 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ static bool display_dir_recursive(bool pos[2], char* parent, t_file* file, t_ft_
 static void file_print_wrapper(t_file** file, size_t idx, t_ft_ls* data) {
   (void)idx;
   (void)data;
-  file_print(*file, data);
+  if (data->settings.sort.type == SORT_NONE)
+    file_print((t_file*)file, data);
+  else
+    file_print(*file, data);
   // file_debug_print(*file);
 }
 
@@ -64,14 +67,12 @@ void on_each_file(t_file* file, struct get_files_cache* cache) {
 
 static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_ls* data) {
   bool first = pos[0];
-  bool last = pos[1];
   bool is_in_dir_cache = data->dir_cache->get(data->dir_cache, dir);
   if (is_in_dir_cache) {
     ft_show_error(EXIT_MINOR, false, false, "%s not listing already-listed directory", dir->display_path);
     return false;
   }
   (void)first;
-  (void)last;
   if (!first)
     ft_printf("\n");
   if (data->settings.print_dir_name) {
@@ -92,13 +93,13 @@ static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_
   data->first_batch_print = true;
   sorted->foreach(sorted, (t_vector_foreach_f)file_print_wrapper, data);
   ft_printf("\n");
-  // if (data->settings.filter.recursive || !last)
   if (data->settings.filter.recursive) {
     data->dir_cache->add(data->dir_cache, dir, dir);
     pre_parents = resolve_path(2, pre_parents, dir->display_path);
     if (!pre_parents) {
       files->destroy(files);
-      sorted->destroy(sorted);
+      if (sorted != files)
+        sorted->destroy(sorted);
       ft_show_error(EXIT_FATAL, true, false, "cannot allocate memory");
     }
     for (uint32_t i = 0; i < sorted->size; i++) {
@@ -108,7 +109,8 @@ static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_
     free(pre_parents);
     data->dir_cache->remove(data->dir_cache, dir);
   }
-  sorted->destroy(sorted);
+  if (sorted != files)
+    sorted->destroy(sorted);
   files->destroy(files);
   return true;
 }
