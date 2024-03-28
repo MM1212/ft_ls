@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:31:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:42:40 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 00:28:57 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ t_colors_registry* colors_registry_create(char** env)
 
 static bool find_match(const char* key, const char* value, const char* search) {
   (void)value;
-  return ft_strchr(key, '*') && ft_wildcard_match(key, search);
+  return *key == '*' && ft_strcmp(key + 1, search) == 0;
 }
 
 char* get_color_for_file(
@@ -93,7 +93,10 @@ char* get_color_for_file(
   default: break;
   }
   t_hashtable_item* search;
-  if ((search = reg->find(reg, (t_hashtable_find)find_match, file->name)))
+  char* ext = ft_strrchr(file->name, '.');
+  if (!ext)
+    ext = file->name;
+  if ((search = reg->find(reg, (t_hashtable_find)find_match, ext)))
     return search->value;
   if (is_file_executable(file))
     return reg->get(reg, "ex");

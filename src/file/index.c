@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 16:18:11 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 23:36:18 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 00:21:08 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ enum e_perm_set {
 };
 
 static char handle_perms_third_set(t_file* file, uint8_t mode, enum e_perm_set set) {
+  (void)file;
   //  If the character is part of the owner permissions and the file is not exe‐
   //  cutable or the directory is not searchable by the owner, and the set-user-
   //  id bit is set.

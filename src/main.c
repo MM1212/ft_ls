@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 00:10:02 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 00:21:33 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,6 @@ static bool init(t_ft_ls* data, char** env) {
   if (!data->io || !data->colors || !data->dir_cache)
     return false;
   return true;
-}
-
-static int sort_entries(t_file* a, t_file* b) {
-  return file_is_dir(a) - file_is_dir(b);
 }
 
 static void manage_settings(t_ft_ls* data) {

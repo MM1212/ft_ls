@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:31:13 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 00:04:59 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 00:22:04 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,14 @@ static void file_print_wrapper(t_file** file, size_t idx, t_ft_ls* data) {
 struct get_files_cache {
   uint32_t blocks_size;
   t_ft_ls* data;
+  t_l_fmt_padding padding;
 };
 
 void on_each_file(t_file* file, struct get_files_cache* cache) {
   if (cache->data->settings.format.type == FORMAT_LONG && file_stat(file))
     cache->blocks_size += FS_BLOCK_SIZE(file->stat.st_blocks);
+  if (cache->data->settings.format.type == FORMAT_LONG)
+    file_padding(file, &cache->padding);
 }
 
 static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_ls* data) {
@@ -73,7 +76,9 @@ static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_
     return false;
   }
   (void)first;
-  struct get_files_cache cache = { 0, data };
+  struct get_files_cache cache = { 0, data, {0} };
+  ft_bzero(&cache.padding, sizeof(t_l_fmt_padding));
+  cache.padding.settings = &data->settings;
   t_vector* files = get_files_from_dir(dir, &data->settings, (void*)on_each_file, &cache);
   if (!files)
     return false;
@@ -82,7 +87,7 @@ static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_
   if (data->settings.print_dir_name) {
     ft_printf("%s:\n", dir->display_path);
   }
-  data->padding = get_padding2(files, &data->settings);
+  data->padding = cache.padding;
   if (data->settings.format.type == FORMAT_LONG)
     ft_printf("total %u\n", cache.blocks_size);
   if (!files->size) {

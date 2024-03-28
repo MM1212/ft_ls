@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:14:33 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:30:16 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 00:19:55 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,3 +31,4 @@ typedef struct s_l_fmt_padding {
 
 t_l_fmt_padding get_padding(t_list* files, t_settings* settings);
 t_l_fmt_padding get_padding2(t_vector* files, t_settings* settings);
+void file_padding(t_file* file, t_l_fmt_padding* padding);
