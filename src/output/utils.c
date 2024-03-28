@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:01:44 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 23:38:36 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 11:40:11 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,34 +86,34 @@ uint32_t get_total_blocks(t_vector* files) {
   return total;
 }
 
-void print_indicator_style(t_file* file, t_settings* settings) {
+char get_indicator_style(t_file* file, t_settings* settings) {
   switch (settings->format.indicator_style) {
   case INDICATOR_STYLE_NONE:
     break;
   case INDICATOR_STYLE_SLASH:
     if (file->type == FILE_DIRECTORY)
-      ft_printf("/");
+      return '/';
     break;
   case INDICATOR_STYLE_FILE_TYPE:
   case INDICATOR_STYLE_CLASSIFY:
     switch (file->type) {
     case FILE_DIRECTORY:
-      ft_printf("/");
+      return '/';
       break;
     case FILE_FIFO:
-      ft_printf("|");
+      return '|';
       break;
     case FILE_SOCKET:
-      ft_printf("=");
+      return '=';
       break;
     case FILE_SYMLINK:
-      ft_printf("@");
+      return '@';
       break;
     case FILE_REGULAR: {
       if (settings->format.indicator_style != INDICATOR_STYLE_CLASSIFY)
         break;
       if (is_file_executable(file))
-        ft_printf("*");
+        return '*';
       break;
     }
     default:
@@ -121,4 +121,5 @@ void print_indicator_style(t_file* file, t_settings* settings) {
     }
     break;
   }
+  return '\0';
 }

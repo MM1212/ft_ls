@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:27:45 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 17:22:18 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 
 static void cb(t_cli_option* opt, t_ft_ls* data) {
   (void)opt;
-  data->settings.sort.type = SORT_WIDTH;
+  if (!ft_isnbr)
+  data->settings.terminal_width = ft_atoi(opt->value);
 }
 
-bool io_describe_sort_width(t_cli_handle* cli) {
+bool io_describe_format_width(t_cli_handle* cli) {
   t_cli_option_builder* opt = cli->new_option(\
-    "sort_width",
-    "assume the terminal is N columns wide. This option is used to determine the width of the output, which is used when formatting file names in a column.",
+    "width",
+    "set output width to COLS.  0 means no limit",
     false
   );
   if (!opt)

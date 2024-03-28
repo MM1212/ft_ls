@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:48:20 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 23:03:54 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 11:13:27 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ char* resolve_path(size_t count, ...) {
   char* path = NULL;
   for (size_t i = 0; i < count; i++) {
     char* part = va_arg(args, char*);
-    if (ft_str_endswith(part, "X11"))
-      ft_fprintf(2, "%s|%s\n", path, part);
     if (!part || !*part)
       continue;
 

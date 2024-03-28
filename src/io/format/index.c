@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:28:13 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 14:56:24 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static const char* format_options[] = {
   "long,verbose",
   "commas",
   "horizontal,across",
-  // "vertical",
+  "vertical",
   "single-column",
   NULL
 };
@@ -26,7 +26,7 @@ static bool (*io_describe_formats[])(t_cli_handle*) = {
   io_describe_format_long,
   io_describe_format_commas,
   io_describe_format_horizontal,
-  // io_describe_format_vertical,
+  io_describe_format_vertical,
   io_describe_format_time,
   io_describe_format_time_style,
   io_describe_format_indicator_style
@@ -39,8 +39,8 @@ static void cb(t_cli_option* opt, t_ft_ls* data) {
     data->settings.format.type = FORMAT_COMMAS;
   else if (ft_strcmp(opt->value, "horizontal") == 0)
     data->settings.format.type = FORMAT_HORIZONTAL;
-  // else if (ft_strcmp(opt->value, "vertical") == 0)
-  //   data->settings.format.type = FORMAT_VERTICAL;
+  else if (ft_strcmp(opt->value, "vertical") == 0)
+    data->settings.format.type = FORMAT_VERTICAL;
   else if (ft_strcmp(opt->value, "single-column") == 0)
     data->settings.format.type = FORMAT_SINGLE_COLUMN;
 }

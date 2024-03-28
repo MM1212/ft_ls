@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:31:13 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 00:22:04 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 12:29:29 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,17 @@ static void file_print_wrapper(t_file** file, size_t idx, t_ft_ls* data) {
   // file_debug_print(*file);
 }
 
+static void output_files(t_vector* sorted, t_ft_ls* data) {
+  data->first_batch_print = true;
+  if (data->settings.format.type == FORMAT_LONG || data->settings.format.type == FORMAT_SINGLE_COLUMN)
+    sorted->foreach(sorted, (t_vector_foreach_f)file_print_wrapper, data);
+  else
+    output_in_grid(sorted, data);
+  ft_printf("\n");
+}
+
 struct get_files_cache {
+  bool first;
   uint32_t blocks_size;
   t_ft_ls* data;
   t_l_fmt_padding padding;
@@ -64,8 +74,15 @@ struct get_files_cache {
 void on_each_file(t_file* file, struct get_files_cache* cache) {
   if (cache->data->settings.format.type == FORMAT_LONG && file_stat(file))
     cache->blocks_size += FS_BLOCK_SIZE(file->stat.st_blocks);
-  if (cache->data->settings.format.type == FORMAT_LONG)
-    file_padding(file, &cache->padding);
+  file_padding(file, &cache->padding);
+  if (cache->data->settings.format.type != FORMAT_LONG && cache->data->settings.format.type != FORMAT_SINGLE_COLUMN) {
+    cache->padding.total_grid_width += cache->padding.grid_width;
+    if (!cache->first) {
+      cache->padding.total_line_width += 2;
+      cache->padding.total_grid_width += 2;
+    }
+  }
+  cache->first = false;
 }
 
 static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_ls* data) {
@@ -76,7 +93,7 @@ static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_
     return false;
   }
   (void)first;
-  struct get_files_cache cache = { 0, data, {0} };
+  struct get_files_cache cache = { true, 0, data, {0} };
   ft_bzero(&cache.padding, sizeof(t_l_fmt_padding));
   cache.padding.settings = &data->settings;
   t_vector* files = get_files_from_dir(dir, &data->settings, (void*)on_each_file, &cache);
@@ -95,9 +112,7 @@ static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_
     return true;
   }
   t_vector* sorted = sort_files2(files, &data->settings);
-  data->first_batch_print = true;
-  sorted->foreach(sorted, (t_vector_foreach_f)file_print_wrapper, data);
-  ft_printf("\n");
+  output_files(sorted, data);
   if (data->settings.filter.recursive) {
     data->dir_cache->add(data->dir_cache, dir, dir);
     pre_parents = resolve_path(2, pre_parents, dir->display_path);

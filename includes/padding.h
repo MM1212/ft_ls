@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:14:33 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 00:19:55 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 12:25:34 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 #include <lxt/dst/vector.h>
 
 typedef struct s_l_fmt_padding {
+  size_t total_grid_width;
+  size_t total_line_width;
+  size_t grid_width;
   size_t inode;
   size_t block_size;
   size_t owner_name;

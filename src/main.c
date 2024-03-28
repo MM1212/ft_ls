@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 00:21:33 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 11:41:16 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <ft_ls.h>
 #include <file.h>
 #include <sort.h>
+#include <sys/ioctl.h>
 
 t_ft_ls* g_ls_data = NULL;
 
@@ -34,13 +35,20 @@ static bool init(t_ft_ls* data, char** env) {
   g_ls_data = data;
   if (!data->io || !data->colors || !data->dir_cache)
     return false;
+  // get terminal width
+  struct winsize w;
+  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
+    data->settings.terminal_width = DEFAULT_TERMINAL_WIDTH;
+  else
+    data->settings.terminal_width = w.ws_col;
   return true;
 }
 
 static void manage_settings(t_ft_ls* data) {
-  if (data->settings.format.type == FORMAT_NONE) {
-    data->settings.format.type = data->settings.is_tty ? FORMAT_HORIZONTAL : FORMAT_SINGLE_COLUMN;
+  if (data->settings.format.type == FORMAT_NONE && !data->settings.is_tty) {
+    data->settings.format.type = FORMAT_SINGLE_COLUMN;
   }
+  data->settings.format.requires_grid = data->settings.format.type == FORMAT_VERTICAL || data->settings.format.type == FORMAT_HORIZONTAL;
   io_manage_sorting_time(data);
 }
 
