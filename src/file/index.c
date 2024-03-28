@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 16:18:11 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:29:58 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 23:36:18 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include <linux/stat.h>
 #include <ft_ls.h>
 #include <time.h>
+#define _GNU_SOURCE
+#include <string.h>
 
 t_file_type  get_file_type_by_dirent(uint8_t flag) {
   switch (flag) {
@@ -44,17 +46,55 @@ t_file_type get_file_type_by_stat(uint32_t mode) {
   }
 }
 
+enum e_perm_set {
+  PERM_SET_USER,
+  PERM_SET_GROUP,
+  PERM_SET_OTHER
+};
+
+static char handle_perms_third_set(t_file* file, uint8_t mode, enum e_perm_set set) {
+  //  If the character is part of the owner permissions and the file is not exe‐
+  //  cutable or the directory is not searchable by the owner, and the set-user-
+  //  id bit is set.
+  if (set == PERM_SET_USER && (mode & S_ISUID) && !(mode & S_IXUSR))
+    return 'S';
+  if (set == PERM_SET_GROUP && (mode & S_ISGID) && !(mode & S_IXGRP))
+    return 'S';
+  // If the character is part of the other permissions and the file is not exe‐
+  //          cutable or the directory is not searchable by others, and the ``sticky''
+  //          (S_ISVTX) bit is set.
+  if (set == PERM_SET_OTHER && (mode & S_ISVTX) && !(mode & S_IXOTH))
+    return 'T';
+  //  If the character is part of the owner permissions and the file is exe‐
+  //          cutable or the directory searchable by the owner, and the set-user-id bit
+  //          is set.
+  if (set == PERM_SET_USER && (mode & S_ISUID) && (mode & S_IXUSR))
+    return 's';
+  if (set == PERM_SET_GROUP && (mode & S_ISGID) && (mode & S_IXGRP))
+    return 's';
+
+  switch (set) {
+  case PERM_SET_USER:
+    return (mode & S_IXUSR) ? 'x' : '-';
+  case PERM_SET_GROUP:
+    return (mode & S_IXGRP) ? 'x' : '-';
+  case PERM_SET_OTHER:
+    return (mode & S_IXOTH) ? 'x' : '-';
+  }
+  return '-';
+}
+
 void file_build_permissions(t_file* file) {
   struct s_file_permissions* perms = &file->perms;
   perms->user[0] = (file->stat.st_mode & S_IRUSR) ? 'r' : '-';
   perms->user[1] = (file->stat.st_mode & S_IWUSR) ? 'w' : '-';
-  perms->user[2] = (file->stat.st_mode & S_IXUSR) ? 'x' : '-';
+  perms->user[2] = handle_perms_third_set(file, file->stat.st_mode, PERM_SET_USER);
   perms->group[0] = (file->stat.st_mode & S_IRGRP) ? 'r' : '-';
   perms->group[1] = (file->stat.st_mode & S_IWGRP) ? 'w' : '-';
-  perms->group[2] = (file->stat.st_mode & S_IXGRP) ? 'x' : '-';
+  perms->group[2] = handle_perms_third_set(file, file->stat.st_mode, PERM_SET_GROUP);
   perms->other[0] = (file->stat.st_mode & S_IROTH) ? 'r' : '-';
   perms->other[1] = (file->stat.st_mode & S_IWOTH) ? 'w' : '-';
-  perms->other[2] = (file->stat.st_mode & S_IXOTH) ? 'x' : '-';
+  perms->other[2] = handle_perms_third_set(file, file->stat.st_mode, PERM_SET_OTHER);
 }
 
 static void file_readlink(t_file* file) {

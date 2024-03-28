@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:31:13 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:27:11 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 00:04:59 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,15 +73,15 @@ static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_
     return false;
   }
   (void)first;
+  struct get_files_cache cache = { 0, data };
+  t_vector* files = get_files_from_dir(dir, &data->settings, (void*)on_each_file, &cache);
+  if (!files)
+    return false;
   if (!first)
     ft_printf("\n");
   if (data->settings.print_dir_name) {
     ft_printf("%s:\n", dir->display_path);
   }
-  struct get_files_cache cache = { 0, data };
-  t_vector* files = get_files_from_dir(dir, &data->settings, (void*)on_each_file, &cache);
-  if (!files)
-    return false;
   data->padding = get_padding2(files, &data->settings);
   if (data->settings.format.type == FORMAT_LONG)
     ft_printf("total %u\n", cache.blocks_size);
@@ -120,15 +120,14 @@ void ft_ls_run(t_ft_ls* data) {
     display_files(data->file_entries, data);
   if (!data->dir_entries)
     return;
-  // if (data->file_entries)
-  //   ft_printf("\n");
+  if (data->file_entries)
+    ft_printf("\n");
   t_list* iter = data->dir_entries;
+  bool skip_nl = false;
   while (iter) {
     t_file* dir = iter->content;
-    bool ok = display_directory((bool[2]) { !iter->prev, !iter->next }, "", dir, data);
-    (void)ok;
-    // if (ok && iter->next)
-    //   ft_printf("[AFTER_DIR_NL]\n");
+    bool ok = display_directory((bool[2]) { !iter->prev || skip_nl, !iter->next }, "", dir, data);
+    skip_nl = !ok && !iter->prev;
     iter = iter->next;
   }
 }

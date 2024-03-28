@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:01:44 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:27:01 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 23:38:36 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ t_vector* get_files_from_dir(\
   DIR* d = opendir(dir->full_path);
   if (!d) {
     ft_show_error(EXIT_MINOR, false, true, "cannot open directory '%s'", dir->display_path);
+    files->destroy(files);
     return NULL;
   }
   struct dirent* entry;
@@ -111,7 +112,7 @@ void print_indicator_style(t_file* file, t_settings* settings) {
     case FILE_REGULAR: {
       if (settings->format.indicator_style != INDICATOR_STYLE_CLASSIFY)
         break;
-      if (file_stat(file) && file->perms.user[2] == 'x')
+      if (is_file_executable(file))
         ft_printf("*");
       break;
     }

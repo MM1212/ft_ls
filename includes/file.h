@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 15:08:34 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:30:29 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:43:02 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,3 +92,4 @@ t_file_type get_file_type_by_stat(uint32_t mode);
 char* get_file_owner_name(t_file* file);
 char* get_file_group_name(t_file* file);
 char* resolve_path(size_t count, ...);
+bool is_file_executable(t_file* file);

@@ -6,13 +6,14 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:26:46 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 00:10:02 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.h>
 #include <ft_ls.h>
 #include <file.h>
+#include <sort.h>
 
 t_ft_ls* g_ls_data = NULL;
 
@@ -58,24 +59,38 @@ static void parse_entries(t_ft_ls* data, char** entries) {
   }
   if (!base)
     return;
-  base = ft_lstsort(base, (int (*)(void* a, void* b))sort_entries);
+  base = sort_files(base, &data->settings);
   data->settings.print_dir_name = data->settings.filter.recursive || i > 1;
   if (data->settings.filter.list_directories) {
     data->file_entries = base;
     return;
   }
-  else if (!file_is_dir(base->content)) {
-    data->file_entries = base;
-    t_list* last;
-    while (base) {
-      t_file* file = base->content;
-      if (file_is_dir(file))
-        break;
-      last = base;
-      base = base->next;
+  else {
+    t_list* iter = base;
+    while (iter) {
+      t_file* file = iter->content;
+      if (file->type != FILE_DIRECTORY) {
+        t_list* tmp = iter->next;
+        if (iter->next)
+          iter->next->prev = iter->prev;
+        if (iter->prev)
+          iter->prev->next = iter->next;
+        else
+          base = iter->next;
+        iter->prev = NULL;
+        iter->next = NULL;
+        t_list* last = ft_lstlast(data->file_entries);
+        if (last) {
+          last->next = iter;
+          iter->prev = last;
+        }
+        else
+          data->file_entries = iter;
+        iter = tmp;
+      }
+      else
+        iter = iter->next;
     }
-    if (last)
-      last->next = NULL;
   }
   data->dir_entries = base;
 }
@@ -94,6 +109,7 @@ int main(int ac, char** av, char** env) {
   if (!paths || !paths[0])
     paths = (char* []){ ".", NULL };
   manage_settings(&data);
+  // settings_print(&data.settings);
   parse_entries(&data, paths);
   ft_ls_run(&data);
   ft_exit(&data, data.exit_status, NULL);

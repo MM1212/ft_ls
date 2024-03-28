@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:31:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:26:52 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 22:42:40 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ char* get_color_for_file(
   t_hashtable_item* search;
   if ((search = reg->find(reg, (t_hashtable_find)find_match, file->name)))
     return search->value;
-  if (file_stat(file) && file->perms.user[2] == 'x')
+  if (is_file_executable(file))
     return reg->get(reg, "ex");
   else if (file->type == FILE_REGULAR)
     return reg->get(reg, "fi");

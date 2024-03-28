@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:48:20 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:29:20 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/27 23:03:54 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,12 @@ char* resolve_path(size_t count, ...) {
   }
   va_end(args);
   return path;
+}
+
+bool is_file_executable(t_file* file) {
+  if (file->type != FILE_REGULAR)
+    return false;
+  if (!file_stat(file))
+    return false;
+  return file->stat.st_mode & S_IXUSR || file->stat.st_mode & S_IXGRP || file->stat.st_mode & S_IXOTH;
 }
