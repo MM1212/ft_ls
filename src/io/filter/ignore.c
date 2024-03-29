@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:28:29 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 22:19:26 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ bool io_describe_filter_ignore(t_cli_handle* cli) {
     return false;
   opt->add_switch('I')
     ->set_flags(CLI_OPTION_FLAG_OPTIONAL)
+    ->allow_multiple_values(true, '\1')
     ->set_cb((t_cli_option_cb)cb)
     ->end();
   return cli->is_valid();

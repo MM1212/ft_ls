@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:01:44 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 15:29:20 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 22:34:56 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <dirent.h>
 #include <time.h>
 #include <system.h>
+#include <libft.h>
 
 static bool filter_file(struct dirent* entry, t_settings* settings) {
   bool is_hidden = entry->d_name[0] == '.';
@@ -26,12 +27,29 @@ static bool filter_file(struct dirent* entry, t_settings* settings) {
     if (!settings->filter.almost_all || is_dot)
       return true;
   }
-  // -I
-  if (settings->filter.ignore_pattern && ft_wildcard_match(settings->filter.ignore_pattern, entry->d_name))
-    return true;
   // -B
   if (settings->filter.ignore_backups && ft_str_endswith(entry->d_name, "~"))
     return true;
+
+  // -I
+  if (settings->filter.ignore_pattern) {
+    char* pattern = settings->filter.ignore_pattern;
+    while (*pattern) {
+      char* next = ft_strchr(pattern, '\1');
+      bool stop = !next;
+      if (next)
+        *next = '\0';
+      bool matches = ft_wildcard_match(pattern, entry->d_name);
+      if (next)
+        *next = '\1';
+      if (matches)
+        return true;
+      if (stop)
+        break;
+      pattern = next + 1;
+    }
+  }
+
   return false;
 }
 
