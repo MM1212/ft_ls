@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 16:18:11 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 00:21:08 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 15:59:20 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ enum e_perm_set {
   PERM_SET_OTHER
 };
 
-static char handle_perms_third_set(t_file* file, uint8_t mode, enum e_perm_set set) {
+static char handle_perms_third_set(t_file* file, mode_t mode, enum e_perm_set set) {
   (void)file;
   //  If the character is part of the owner permissions and the file is not exe‐
   //  cutable or the directory is not searchable by the owner, and the set-user-
@@ -66,6 +66,8 @@ static char handle_perms_third_set(t_file* file, uint8_t mode, enum e_perm_set s
   //          (S_ISVTX) bit is set.
   if (set == PERM_SET_OTHER && (mode & S_ISVTX) && !(mode & S_IXOTH))
     return 'T';
+  if (set == PERM_SET_OTHER && (mode & S_ISVTX) && (mode & S_IXOTH))
+    return 't';
   //  If the character is part of the owner permissions and the file is exe‐
   //          cutable or the directory searchable by the owner, and the set-user-id bit
   //          is set.
@@ -87,6 +89,10 @@ static char handle_perms_third_set(t_file* file, uint8_t mode, enum e_perm_set s
 
 void file_build_permissions(t_file* file) {
   struct s_file_permissions* perms = &file->perms;
+  if (is_file_a_broken_link(file)) {
+    ft_memset(perms, '?', sizeof(struct s_file_permissions));
+    return;
+  }
   perms->user[0] = (file->stat.st_mode & S_IRUSR) ? 'r' : '-';
   perms->user[1] = (file->stat.st_mode & S_IWUSR) ? 'w' : '-';
   perms->user[2] = handle_perms_third_set(file, file->stat.st_mode, PERM_SET_USER);
@@ -117,10 +123,15 @@ static void file_readlink(t_file* file) {
   if (g_ls_data->settings.filter.dereference_links || g_ls_data->settings.filter.dereference_links_cli) {
     if (stat(link_path, &file->stat) == -1) {
       ft_show_error(EXIT_MINOR, false, true, "cannot access '%s'", file->display_path);
-      free(link);
+      // free(link);
       free(link_path);
-      file->symlinkd = true;
-      file->symlink = NULL;
+      file->symlinkd = false;
+      file->symlink = link;
+      free(file->owner);
+      free(file->group);
+      file->owner = ft_strdup("?");
+      file->group = ft_strdup("?");
+      file_build_permissions(file);
       return;
     }
     free(file->full_path);
@@ -141,10 +152,7 @@ static void file_readlink(t_file* file) {
     file->symlink = link;
     file->symlink_path = link_path;
     if (stat(link_path, &file->lstat) == -1) {
-      ft_show_error(EXIT_MINOR, false, true, "cannot access '%s'", file->display_path);
-      free(file->symlink);
       free(file->symlink_path);
-      file->symlink = NULL;
       file->symlink_path = NULL;
       file->symlinkd = false;
       return;
@@ -237,7 +245,7 @@ t_file* file_from_stat(const char* full_path, t_file* ref, bool resolve_symlink)
 
 bool file_stat(t_file* file)
 {
-  if (file->statd)
+  if (file->statd || is_file_a_broken_link(file))
     return true;
   if (lstat(file->full_path, &file->stat) == -1) {
     ft_show_error(EXIT_MINOR, false, true, "cannot access '%s'", file->from_link, file->full_path);
@@ -262,6 +270,7 @@ t_file* file_from_symlink_view(t_file* link, t_file* file) {
   link->name = file->symlink;
   link->display_path = file->display_path;
   link->type = get_file_type_by_stat(file->lstat.st_mode);
+  link->from_link = true;
   file_build_permissions(link);
   return link;
 }

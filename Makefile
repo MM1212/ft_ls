@@ -49,7 +49,6 @@ CFLAGS = \
 		-Wall -Wextra -Werror \
 		-DVERSION="\"$$(cat VERSION)\"" \
 		-g -gdwarf-2 -g3 \
-		$(if $(DEBUG_ON),-g -fsanitize=address,undefined,) \
 		$(if $(DEBUG_ON),-DDEBUG,) \
 		-DCOLORS_RED="\"$(RED)\"" \
 		-DCOLORS_GREEN="\"$(GREEN)\"" \

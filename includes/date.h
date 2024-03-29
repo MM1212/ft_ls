@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 20:56:45 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:30:34 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 13:25:29 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,4 +16,4 @@
 #include <stddef.h>
 #include <settings.h>
 
-void date_output_verbose_date(t_file* file, t_settings* settings);
+char* date_get_verbose_date(t_file* file, t_settings* settings);

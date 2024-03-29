@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:09:51 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:30:24 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 16:08:07 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ bool io_describe_format_vertical(t_cli_handle* cli);
 bool io_describe_format_time(t_cli_handle* cli);
 bool io_describe_format_time_style(t_cli_handle* cli);
 bool io_describe_format_indicator_style(t_cli_handle* cli);
+bool io_describe_format_width(t_cli_handle* cli);
 /* DISPLAY */
 bool io_describe_display_options(t_cli_handle* cli);
 bool io_describe_display_color(t_cli_handle* cli);
@@ -61,7 +62,6 @@ bool io_describe_sort_unsorted_mix(t_cli_handle* cli);
 bool io_describe_sort_time(t_cli_handle* cli);
 bool io_describe_sort_size(t_cli_handle* cli);
 bool io_describe_sort_version(t_cli_handle* cli);
-bool io_describe_sort_width(t_cli_handle* cli);
 bool io_describe_sort_reverse(t_cli_handle* cli);
 void io_manage_sorting_time(struct s_ls* data);
 

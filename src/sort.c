@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 11:49:36 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 23:47:55 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 17:40:30 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ int sort_by_size(t_file* a, t_file* b) {
 }
 
 int sort_by_version(t_file* a, t_file* b) {
-  bool a_is_version = ft_isnbr(a->name);
-  bool b_is_version = ft_isnbr(b->name);
+  bool a_is_version = ft_isnbr(a->name, false, true);
+  bool b_is_version = ft_isnbr(b->name, false, true);
   if (!a_is_version && !b_is_version)
     return ft_strcmp(a->name, b->name);
   if (!a_is_version && b_is_version)
@@ -86,9 +86,6 @@ int sort_by_version(t_file* a, t_file* b) {
 static void choose_sort_cmp(t_settings* settings) {
   switch (settings->sort.type) {
   case SORT_NONE:
-    break;
-  case SORT_WIDTH:
-    // settings->sort.cmp = (t_settings_sort_cmp)sort_by_width;
     break;
   case SORT_ASCII:
     settings->sort.cmp = (t_settings_sort_cmp)sort_by_ascii;

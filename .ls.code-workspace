@@ -60,7 +60,9 @@
       "istream": "c",
       "typeinfo": "c",
       "vector.h": "c",
-      "block_size.h": "c"
+      "block_size.h": "c",
+      "stddef.h": "c",
+      "grp.h": "c"
     },
     "files.exclude": {
       "**/*.o": false,

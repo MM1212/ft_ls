@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 14:56:24 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 16:09:59 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ static bool (*io_describe_formats[])(t_cli_handle*) = {
   io_describe_format_vertical,
   io_describe_format_time,
   io_describe_format_time_style,
-  io_describe_format_indicator_style
+  io_describe_format_indicator_style,
+  io_describe_format_width,
 };
 
 static void cb(t_cli_option* opt, t_ft_ls* data) {

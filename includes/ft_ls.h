@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 12:58:29 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:30:26 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/28 17:58:49 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ struct s_ls {
   bool first_batch_print;
   t_exit_status exit_status;
   t_hashtable* dir_cache;
+  t_vector* columns;
 };
 
 void ft_ls_destroy(t_ft_ls* data);

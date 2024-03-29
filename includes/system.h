@@ -6,10 +6,11 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 22:26:16 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:30:07 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 14:09:38 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 # define FS_BLOCK_SIZE(x) (x / 2)
+# define EOL_BYTE '\n'

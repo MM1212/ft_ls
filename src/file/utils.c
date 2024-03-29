@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:48:20 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 11:13:27 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 15:52:34 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
+#include <ft_ls.h>
 
 bool file_is_dir(t_file* file) {
   return file->type == FILE_DIRECTORY || (file->type == FILE_SYMLINK && file->ltype == FILE_DIRECTORY);
@@ -76,4 +77,12 @@ bool is_file_executable(t_file* file) {
   if (!file_stat(file))
     return false;
   return file->stat.st_mode & S_IXUSR || file->stat.st_mode & S_IXGRP || file->stat.st_mode & S_IXOTH;
+}
+
+bool is_file_a_broken_link(t_file* file) {
+  return (
+    file->type == FILE_SYMLINK &&
+    !file->symlinkd && file->symlink &&
+    (g_ls_data->settings.filter.dereference_links || g_ls_data->settings.filter.dereference_links_cli)
+  );
 }

@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 20:58:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:26:56 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 13:30:31 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,12 @@ static char* get_verbose_locale_time(time_t date, bool is_old) {
   return buff;
 }
 
-void date_output_verbose_date(t_file* file, t_settings* settings) {
-  if (!file->statd && !file_stat(file))
-    return;
+char* date_get_verbose_date(t_file* file, t_settings* settings) {
+  static char buff[2048];
+  if (!file->statd && !file_stat(file)) {
+    ft_sprintf(buff, 2048, "\?\?-\?\?-\?\? \?\?:\?\?:\?\?");
+    return buff;
+  }
   time_t date;
   size_t nsecs;
   switch (settings->format.time) {
@@ -63,32 +66,31 @@ void date_output_verbose_date(t_file* file, t_settings* settings) {
   }
   bool is_old = is_date_6_months_ago(date);
   switch (settings->format.time_style) {
-  case TIME_STYLE_FULL:
-    ft_printf("%s.%09u ", \
-      date_format(date, "%Y-%m-%d %H:%M:%S"), \
-      nsecs \
+  case TIME_STYLE_FULL: {
+    char* p = buff;
+    p += ft_sprintf(buff, 2048, "%s.%09u ",
+      date_format(date, "%Y-%m-%d %H:%M:%S"),
+      nsecs
     );
-    ft_printf("%s ", date_format(date, "%z"));
+    ft_sprintf(p, 2048 - (p - buff), "%s", date_format(date, "%z"));
     break;
+  }
   case TIME_STYLE_LONG:
-    ft_printf("%s ", date_format(date, "%Y-%m-%d %H:%M"));
+    ft_sprintf(buff, 2048, "%s", date_format(date, "%Y-%m-%d %H:%M"));
     break;
   case TIME_STYLE_LOCALE:
-    ft_printf("%s ", get_verbose_locale_time(date, is_old));
+    ft_sprintf(buff, 2048, "%s", get_verbose_locale_time(date, is_old));
     break;
   case TIME_STYLE_ISO:
     if (is_old)
-      ft_printf("%s ", date_format(date, "%Y-%m-%d "));
+      ft_sprintf(buff, 2048, "%s", date_format(date, "%Y-%m-%d "));
     else
-      ft_printf("%s ", date_format(date, "%m-%d %H:%M"));
+      ft_sprintf(buff, 2048, "%s", date_format(date, "%m-%d %H:%M"));
     break;
   case TIME_STYLE_FORMAT: {
-    char buff[2048];
-    ft_bzero(buff, sizeof(buff));
     strftime(buff, 2048, settings->format.time_format, localtime(&date));
-    ft_printf("%s ", buff);
     break;
   }
   }
+  return buff;
 }
-// [[CC]YY]MMDDhhmm[.ss]

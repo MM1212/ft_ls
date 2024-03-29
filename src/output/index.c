@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:31:13 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 12:29:29 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 14:21:26 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,6 @@
 #include "output.h"
 #include <sort.h>
 #include <system.h>
-
-static void display_files(t_list* files, t_ft_ls* data) {
-  data->padding = get_padding(files, &data->settings);
-  data->first_batch_print = true;
-  ft_lstiter2(files, (t_lst_iter2)file_print, data);
-  ft_printf("\n");
-}
 
 static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_ls* data);
 
@@ -30,37 +23,45 @@ static bool display_dir_recursive(bool pos[2], char* parent, t_file* file, t_ft_
   return display_directory(pos, parent, file, data);
 }
 
-/* if (data->settings.filter.recursive) {
-   bool has_dirs = false;
-   t_list* iter = files;
-   while (iter) {
-     t_file* file = iter->content;
-     if (file->type == FILE_DIRECTORY) {
-       has_dirs = true;
-       break;
-     }
-     iter = iter->next;
-   }
-   if (has_dirs)
-     data->settings.print_dir_name = true;
- } */
-
-static void file_print_wrapper(t_file** file, size_t idx, t_ft_ls* data) {
-  (void)idx;
-  (void)data;
-  if (data->settings.sort.type == SORT_NONE)
-    file_print((t_file*)file, data);
-  else
-    file_print(*file, data);
-  // file_debug_print(*file);
+void output_files(t_vector* sorted, t_ft_ls* data) {
+  switch (data->settings.format.type) {
+  case FORMAT_SINGLE_COLUMN:
+  case FORMAT_LONG:
+    for (uint32_t i = 0; i < sorted->size; i++) {
+      t_file** file = sorted->at(sorted, i);
+      file_print(*file, data);
+      ft_putchar_fd(EOL_BYTE, 1);
+    }
+    break;
+  case FORMAT_VERTICAL:
+  case FORMAT_HORIZONTAL:
+    if (!data->settings.terminal_width)
+      print_files_with_separator(sorted, ' ', data);
+    else
+      output_in_grid(sorted, data);
+    break;
+  case FORMAT_COMMAS:
+    print_files_with_separator(sorted, ',', data);
+    break;
+  case FORMAT_NONE:
+    break;
+  }
 }
 
-static void output_files(t_vector* sorted, t_ft_ls* data) {
-  data->first_batch_print = true;
-  if (data->settings.format.type == FORMAT_LONG || data->settings.format.type == FORMAT_SINGLE_COLUMN)
-    sorted->foreach(sorted, (t_vector_foreach_f)file_print_wrapper, data);
-  else
-    output_in_grid(sorted, data);
+static void display_files(t_list* files, t_ft_ls* data) {
+  data->padding = get_padding(files, &data->settings);
+
+  t_vector* sorted = vector_create3(sizeof(t_file*), ft_lstsize(files), NULL);
+  if (!sorted)
+    ft_show_error(EXIT_FATAL, true, false, "cannot allocate memory");
+  t_list* iter = files;
+  size_t idx = 0;
+  while (iter) {
+    *((t_file**)sorted->at(sorted, idx++)) = iter->content;
+    iter = iter->next;
+  }
+  output_files(sorted, data);
+  sorted->destroy(sorted);
   ft_printf("\n");
 }
 
@@ -71,15 +72,13 @@ struct get_files_cache {
   t_l_fmt_padding padding;
 };
 
-void on_each_file(t_file* file, struct get_files_cache* cache) {
-  if (cache->data->settings.format.type == FORMAT_LONG && file_stat(file))
+static void on_each_file(t_file* file, struct get_files_cache* cache) {
+  if ((cache->data->settings.format.type == FORMAT_LONG || cache->data->settings.display.block_size) && file_stat(file))
     cache->blocks_size += FS_BLOCK_SIZE(file->stat.st_blocks);
   file_padding(file, &cache->padding);
   if (cache->data->settings.format.type != FORMAT_LONG && cache->data->settings.format.type != FORMAT_SINGLE_COLUMN) {
-    cache->padding.total_grid_width += cache->padding.grid_width;
     if (!cache->first) {
       cache->padding.total_line_width += 2;
-      cache->padding.total_grid_width += 2;
     }
   }
   cache->first = false;
@@ -105,7 +104,7 @@ static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_
     ft_printf("%s:\n", dir->display_path);
   }
   data->padding = cache.padding;
-  if (data->settings.format.type == FORMAT_LONG)
+  if (data->settings.format.type == FORMAT_LONG || data->settings.display.block_size)
     ft_printf("total %u\n", cache.blocks_size);
   if (!files->size) {
     files->destroy(files);

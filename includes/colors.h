@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 14:36:05 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:30:37 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 15:20:35 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,8 @@ enum e_color_codes
   COLOR_STICKY, /* =st */
   COLOR_EXEC, /* =ex */
   COLOR_MISSING, /* =mi */
-  COLOR_LEFT, /* =lc */
-  COLOR_RIGHT, /* =rc */
-  COLOR_END, /* =ec */
-  COLOR_EXT /* =*.ext */
+  COLOR_CAPABILITY, /* =ca */
+  COLOR_MULTIHARDLINK, /* =mh */
 };
 
 t_colors_registry* colors_registry_create(char** env);

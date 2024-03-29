@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:26:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 14:57:31 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 14:17:19 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,6 @@ enum e_settings_time_style {
 
 struct s_settings_format {
   t_settings_format_type type;
-  bool requires_grid;
   t_settings_block_size block_size;
   t_settings_time time;
   t_settings_indicator_style indicator_style;
@@ -155,6 +154,7 @@ struct s_settings {
   bool print_dir_name;
   bool is_tty;
   ssize_t terminal_width;
+  size_t tab_size;
 };
 
 void settings_print(t_settings* settings);

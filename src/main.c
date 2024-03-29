@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 11:41:16 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 14:17:32 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,24 +32,28 @@ static bool init(t_ft_ls* data, char** env) {
   data->colors = colors_registry_create(env);
   data->settings.is_tty = isatty(STDOUT_FILENO);
   data->dir_cache = hashtable_create(30, (t_hashtable_hash)dir_cache_hash, (t_hashtable_cmp)dir_cache_cmp, NULL);
+  data->settings.terminal_width = -1;
   g_ls_data = data;
-  if (!data->io || !data->colors || !data->dir_cache)
+  if (!data->io || !data->colors || !data->dir_cache || !data->columns)
     return false;
-  // get terminal width
-  struct winsize w;
-  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
-    data->settings.terminal_width = DEFAULT_TERMINAL_WIDTH;
-  else
-    data->settings.terminal_width = w.ws_col;
   return true;
 }
 
 static void manage_settings(t_ft_ls* data) {
-  if (data->settings.format.type == FORMAT_NONE && !data->settings.is_tty) {
-    data->settings.format.type = FORMAT_SINGLE_COLUMN;
+  if (data->settings.format.type == FORMAT_NONE) {
+    data->settings.format.type = !data->settings.is_tty ? FORMAT_SINGLE_COLUMN : FORMAT_VERTICAL;
   }
-  data->settings.format.requires_grid = data->settings.format.type == FORMAT_VERTICAL || data->settings.format.type == FORMAT_HORIZONTAL;
   io_manage_sorting_time(data);
+  if (data->settings.terminal_width < 0) {
+    // get terminal width
+    struct winsize w;
+    if (!data->settings.is_tty || ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
+      data->settings.terminal_width = DEFAULT_TERMINAL_WIDTH;
+    else
+      data->settings.terminal_width = w.ws_col;
+  }
+  if (!data->io->is_present("tabsize"))
+    data->settings.tab_size = 8;
 }
 
 static void parse_entries(t_ft_ls* data, char** entries) {
