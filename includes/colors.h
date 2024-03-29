@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 14:36:05 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 15:20:35 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 22:04:30 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ enum e_color_codes
   COLOR_MISSING, /* =mi */
   COLOR_CAPABILITY, /* =ca */
   COLOR_MULTIHARDLINK, /* =mh */
+  COLOR_RESET, /* =rs */
+  COLOR_LEFTCODE, /* =lc */
+  COLOR_RIGHTCODE, /* =rc */
 };
 
 t_colors_registry* colors_registry_create(char** env);

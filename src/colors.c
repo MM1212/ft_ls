@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:31:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 15:21:05 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 22:05:10 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,26 @@ struct s_default_color {
 
 static const struct s_default_color default_color_indicators[] =
 {
-  { "di", "\33[01;34m" },		/* di: Directory: bright blue */
-  { "ln", "\33[01;36m" },		/* ln: Symlink: bright cyan */
-  { "pi", "\33[33m" },		/* pi: Pipe: yellow/brown */
-  { "so", "\33[01;35m" },		/* so: Socket: bright magenta */
-  { "bd", "\33[01;33m" },		/* bd: Block device: bright yellow */
-  { "cd", "\33[01;33m" },		/* cd: Char device: bright yellow */
-  { "ex", "\33[01;32m" },		/* ex: Executable: bright green */
-  { "do", "\33[01;35m" },		/* do: Door: bright magenta */
-  { "su", "\33[37;41m" },		/* su: setuid: white on red */
-  { "sg", "\33[30;43m" },		/* sg: setgid: black on yellow */
-  { "st", "\33[37;44m" },		/* st: sticky: black on blue */
-  { "ow", "\33[34;42m" },		/* ow: other-writable: blue on green */
-  { "tw", "\33[30;42m" },		/* tw: ow w/ sticky: black on green */
+  { "di", "01;34" },		/* di: Directory: bright blue */
+  { "ln", "01;36" },		/* ln: Symlink: bright cyan */
+  { "pi", "33" },		/* pi: Pipe: yellow/brown */
+  { "so", "01;35" },		/* so: Socket: bright magenta */
+  { "bd", "01;33" },		/* bd: Block device: bright yellow */
+  { "cd", "01;33" },		/* cd: Char device: bright yellow */
+  { "ex", "01;32" },		/* ex: Executable: bright green */
+  { "do", "01;35" },		/* do: Door: bright magenta */
+  { "su", "37;41" },		/* su: setuid: white on red */
+  { "sg", "30;43" },		/* sg: setgid: black on yellow */
+  { "st", "37;44" },		/* st: sticky: black on blue */
+  { "ow", "34;42" },		/* ow: other-writable: blue on green */
+  { "tw", "30;42" },		/* tw: ow w/ sticky: black on green */
+  { "ca", "30;41" },		/* ca: file with capability: black on red */
+  { "mh", "01;35" },		/* mh: hardlink: bright magenta */
+  { "mi", "01;31" },		/* mi: missing file: bright red */
+  { "no", "0" },		/* no: Normal */
+  { "rs", "0" },		/* rs: Reset */
+  { "lc", "\33[" }, /* lc: Left color */
+  { "rc", "m" } /* rc: Right color */
 };
 static const size_t color_indicator_size = sizeof(default_color_indicators) / sizeof(default_color_indicators[0]);
 
@@ -63,6 +70,9 @@ static struct s_common_color common_colors[] = {
   { "mi", NULL }, // COLOR_MISSING
   { "ca", NULL }, // COLOR_CAPABILITY
   { "mh", NULL }, // COLOR_MULTIHARDLINK
+  { "rs", NULL }, // COLOR_RESET
+  { "lc", NULL }, // COLOR_LEFT
+  { "rc", NULL } // COLOR_RIGHT
 };
 
 static void build_common_colors(t_colors_registry* reg) {
@@ -72,13 +82,15 @@ static void build_common_colors(t_colors_registry* reg) {
   }
 }
 
-static void double_free(void* a, void* b) {
-  free(a);
-  free(b);
-}
-
 t_colors_registry* colors_registry_create(char** env)
 {
+  t_colors_registry* rt = hashtable_create(\
+    256, (t_hashtable_hash)hashtable_joaat_hash, \
+    (t_hashtable_cmp)ft_strcmp, \
+    NULL \
+  );
+  if (!rt)
+    return NULL;
   char* ls_colors = NULL;
   for (size_t i = 0; env[i]; i++) {
     if (ft_strncmp(env[i], "LS_COLORS=", 10) == 0) {
@@ -86,39 +98,23 @@ t_colors_registry* colors_registry_create(char** env)
       break;
     }
   }
-  if (!ls_colors)
-    return NULL;
-  t_colors_registry* rt = hashtable_create(\
-    256, (t_hashtable_hash)hashtable_joaat_hash, \
-    (t_hashtable_cmp)ft_strcmp, \
-    (t_hashtable_delete)double_free \
-  );
-  if (!rt)
-    return NULL;
-  char** colors = ft_split(ls_colors, ":");
-  if (!colors) {
-    rt->destroy(rt);
-    return NULL;
-  }
-  for (size_t i = 0; colors[i]; i++) {
-    char** color = ft_split(colors[i], "=");
-    if (!color) {
-      rt->destroy(rt);
-      ft_split_free(colors);
-      return NULL;
+  if (ls_colors) {
+    char* cursor = ls_colors;
+    while (*cursor) {
+      char* key = cursor;
+      char* value = ft_strchr(cursor, '=');
+      if (!value)
+        break;
+      *value = '\0';
+      value++;
+      cursor = value;
+      while (*cursor && *cursor != ':')
+        cursor++;
+      *cursor = '\0';
+      cursor++;
+      rt->add(rt, key, value);
     }
-    char* code = ft_strjoin(3, "\033[", color[1], "m");
-    if (!code) {
-      rt->destroy(rt);
-      ft_split_free(color);
-      ft_split_free(colors);
-      return NULL;
-    }
-    free(color[1]);
-    rt->add(rt, color[0], code);
-    free(color);
   }
-  ft_split_free(colors);
   for (size_t i = 0; i < color_indicator_size; i++)
     rt->add(rt, default_color_indicators[i].key, default_color_indicators[i].code);
   build_common_colors(rt);
@@ -163,7 +159,7 @@ static char* get_file_special_colors(t_file* file) {
   return NULL;
 }
 
-char* get_color_for_file(
+static char* choose_color(
   t_file* file,
   t_colors_registry* reg,
   t_settings* settings
@@ -197,6 +193,19 @@ char* get_color_for_file(
   if ((search = reg->find(reg, (t_hashtable_find)find_match, ext)))
     return search->value;
   return GET_COMMON_COLOR(COLOR_NORM);
+}
+
+char* get_color_for_file(
+  t_file* file,
+  t_colors_registry* reg,
+  t_settings* settings
+) {
+  static char buf[256];
+  char* color = choose_color(file, reg, settings);
+  if (!color)
+    return NULL;
+  ft_sprintf(buf, 256, "%s%s%s", GET_COMMON_COLOR(COLOR_LEFTCODE), color, GET_COMMON_COLOR(COLOR_RIGHTCODE));
+  return buf;
 }
 
 char* get_color_for_symlink(

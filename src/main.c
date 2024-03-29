@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 14:17:32 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 21:59:07 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static bool init(t_ft_ls* data, char** env) {
   data->dir_cache = hashtable_create(30, (t_hashtable_hash)dir_cache_hash, (t_hashtable_cmp)dir_cache_cmp, NULL);
   data->settings.terminal_width = -1;
   g_ls_data = data;
-  if (!data->io || !data->colors || !data->dir_cache || !data->columns)
+  if (!data->io || !data->colors || !data->dir_cache)
     return false;
   return true;
 }

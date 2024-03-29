@@ -6,18 +6,21 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 14:45:42 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:26:49 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 21:50:50 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
 void ft_ls_destroy(t_ft_ls* data) {
-  data->io->free();
-  data->colors->destroy(data->colors);
+  if (data->io)
+    data->io->free();
+  if (data->colors)
+    data->colors->destroy(data->colors);
   ft_lstclear(&data->file_entries, (void (*)(void*))file_free);
   ft_lstclear(&data->dir_entries, (void (*)(void*))file_free);
-  data->dir_cache->destroy(data->dir_cache);
+  if (data->dir_cache)
+    data->dir_cache->destroy(data->dir_cache);
 }
 void ft_exit(t_ft_ls* data, int status, char* message)
 {
