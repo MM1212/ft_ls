@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:48:20 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 15:52:34 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 17:04:50 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,13 @@ bool is_file_a_broken_link(t_file* file) {
     !file->symlinkd && file->symlink &&
     (g_ls_data->settings.filter.dereference_links || g_ls_data->settings.filter.dereference_links_cli)
   );
+}
+
+char* serialize_file_name(char* name) {
+  for (uint32_t i = 0; name[i]; i++) {
+    if (ft_isprint(name[i]))
+      continue;
+    name[i] = '?';
+  }
+  return name;
 }

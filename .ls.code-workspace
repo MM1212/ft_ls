@@ -62,7 +62,9 @@
       "vector.h": "c",
       "block_size.h": "c",
       "stddef.h": "c",
-      "grp.h": "c"
+      "grp.h": "c",
+      "stdbool.h": "c",
+      "acct.h": "c"
     },
     "files.exclude": {
       "**/*.o": false,

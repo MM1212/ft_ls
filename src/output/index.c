@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:31:13 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 14:21:26 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 17:39:03 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void output_files(t_vector* sorted, t_ft_ls* data) {
 
 static void display_files(t_list* files, t_ft_ls* data) {
   data->padding = get_padding(files, &data->settings);
-
   t_vector* sorted = vector_create3(sizeof(t_file*), ft_lstsize(files), NULL);
   if (!sorted)
     ft_show_error(EXIT_FATAL, true, false, "cannot allocate memory");

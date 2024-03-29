@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 16:18:11 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 15:59:20 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 17:58:33 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,18 @@ void file_build_permissions(t_file* file) {
   perms->other[0] = (file->stat.st_mode & S_IROTH) ? 'r' : '-';
   perms->other[1] = (file->stat.st_mode & S_IWOTH) ? 'w' : '-';
   perms->other[2] = handle_perms_third_set(file, file->stat.st_mode, PERM_SET_OTHER);
+  switch (file->acl) {
+  case ACL_NONE:
+    perms->acl = '\0';
+    break;
+  case ACL_SCTX:
+    perms->acl = '.';
+    break;
+  case ACL_YES:
+    perms->acl = '+';
+    break;
+  }
+  perms->end = '\0';
 }
 
 static void file_readlink(t_file* file) {
@@ -195,6 +207,7 @@ static t_file* new_file(
     ft_show_error(EXIT_FATAL, true, false, "cannot allocate memory");
     return NULL;
   }
+  file_setup_security_context(file);
   if (type == FILE_SYMLINK && resolve_symlink)
     file_readlink(file);
   return file;

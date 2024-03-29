@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:14:33 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 15:48:06 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 17:40:19 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,10 @@ typedef struct s_l_fmt_padding {
   size_t grid_width;
   size_t inode;
   size_t block_size;
+  size_t permissions;
   size_t owner_name;
   size_t group_name;
+  size_t scontext;
   size_t size;
   size_t name;
   size_t link;

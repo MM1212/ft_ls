@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 12:09:51 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 16:08:07 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 18:03:36 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ bool io_describe_display_numeric_ids(t_cli_handle* cli);
 bool io_describe_display_omits(t_cli_handle* cli);
 bool io_describe_display_full_time(t_cli_handle* cli);
 bool io_describe_display_size(t_cli_handle* cli);
+bool io_describe_display_scontext(t_cli_handle* cli);
 /* SORT */
 bool io_describe_sort_options(t_cli_handle* cli);
 bool io_describe_sort_none(t_cli_handle* cli);

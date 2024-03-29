@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 15:08:34 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 15:51:22 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 17:58:27 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <libft.h>
+#include <sys/xattr.h>
 
 typedef struct s_file t_file;
 typedef struct s_file_simple t_file_simple;
@@ -40,11 +41,19 @@ enum e_file_type
   FILE_OTHER = '?'
 };
 
+typedef enum e_acl_type {
+  ACL_NONE,
+  ACL_SCTX,
+  ACL_YES
+} t_acl_type;
+
 struct s_file_permissions
 {
   char  user[3];
   char  group[3];
   char  other[3];
+  char  acl;
+  char end;
 };
 
 struct s_file
@@ -54,6 +63,7 @@ struct s_file
   char* display_path; // display path (dir only)
   char* path; // relative path to file
   char* full_path; // full path to file (path + name)
+  char* scontext;
   t_file_type type;
 
   // stat, only used in long format
@@ -62,7 +72,11 @@ struct s_file
   size_t size;
   char* owner;
   char* group;
-  struct s_file_permissions perms;
+  union {
+    struct s_file_permissions perms;
+    char mode[11];
+  };
+  t_acl_type acl;
   // followd a symlink
   bool from_link;
   bool symlinkd;
@@ -91,6 +105,7 @@ void file_debug_print(t_file* file);
 void file_free(t_file* file);
 bool file_is_dir(t_file* file);
 void file_build_permissions(t_file* file);
+void file_setup_security_context(t_file* file);
 t_file_type  get_file_type_by_dirent(uint8_t flag);
 t_file_type get_file_type_by_stat(uint32_t mode);
 char* get_file_owner_name(t_file* file);

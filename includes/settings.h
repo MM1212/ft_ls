@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:26:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 14:17:19 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 17:25:45 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ struct s_settings_display {
   bool inode;
   bool block_size;
   bool numeric_ids;
+  bool scontext;
   t_settings_color color;
 };
 

@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:42:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 15:59:41 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/29 18:08:56 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,18 @@ void file_print(t_file* file, t_ft_ls* data) {
   t_l_fmt_padding* padding = &data->padding;
 
   bool broken_link = is_file_a_broken_link(file);
+  bool is_format_long = data->settings.format.type == FORMAT_LONG;
 
   if (data->settings.display.inode)
     p += ft_sprintf(p, GET_REMAINING_SIZE, broken_link ? "%*c " : "%*u ", padding->inode, broken_link ? '?' : file->id);
   if (data->settings.display.block_size && file_stat(file))
     p += ft_sprintf(p, GET_REMAINING_SIZE, broken_link ? "%*c " : "%*u ", padding->block_size, broken_link ? '?' : FS_BLOCK_SIZE(file->stat.st_blocks));
-  bool is_format_long = data->settings.format.type == FORMAT_LONG;
+  if (!is_format_long && data->settings.display.scontext)
+    p += ft_sprintf(p, GET_REMAINING_SIZE, "%*s ", padding->scontext, file->scontext ? file->scontext : "?");
 
   if (is_format_long) {
     // PERMISSIONS
-    p += ft_sprintf(p, GET_REMAINING_SIZE, "%c", file->type);
-    p += ft_sprintf(p, GET_REMAINING_SIZE, "%.3s", file->perms.user);
-    p += ft_sprintf(p, GET_REMAINING_SIZE, "%.3s", file->perms.group);
-    p += ft_sprintf(p, GET_REMAINING_SIZE, "%.3s", file->perms.other);
-    p += ft_sprintf(p, GET_REMAINING_SIZE, " ");
+    p += ft_sprintf(p, GET_REMAINING_SIZE, "%c%-*.s ", file->type, padding->permissions, file->mode);
     // LINKS
     p += ft_sprintf(p, GET_REMAINING_SIZE, broken_link ? "%*c" : "%*u", padding->link, broken_link ? '?' : file->stat.st_nlink);
     p += ft_sprintf(p, GET_REMAINING_SIZE, " ");
@@ -71,12 +69,14 @@ void file_print(t_file* file, t_ft_ls* data) {
       data->settings.display.omit_owner
       )
       p += ft_sprintf(p, GET_REMAINING_SIZE, " ");
+    if (data->settings.display.scontext)
+      p += ft_sprintf(p, GET_REMAINING_SIZE, "%-*s ", padding->scontext, file->scontext ? file->scontext : "?");
     p += ft_sprintf(p, GET_REMAINING_SIZE, broken_link ? "%*c " : "%*d ", padding->size, broken_link ? '?' : file->stat.st_size);
     // DATE
     if (broken_link)
-    p += ft_sprintf(p, GET_REMAINING_SIZE, "%*c ", padding->date, '?');
+      p += ft_sprintf(p, GET_REMAINING_SIZE, "%*c ", padding->date, '?');
     else
-    p += ft_sprintf(p, GET_REMAINING_SIZE, "%s ", date_get_verbose_date(file, &data->settings));
+      p += ft_sprintf(p, GET_REMAINING_SIZE, "%s ", date_get_verbose_date(file, &data->settings));
   }
   // file name
   char* color_code = get_color_for_file(file, data->colors, &data->settings);
