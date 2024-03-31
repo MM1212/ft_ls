@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 17:31:13 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 17:39:03 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/31 13:47:48 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ static bool display_directory(bool pos[2], char* pre_parents, t_file* dir, t_ft_
   }
   data->padding = cache.padding;
   if (data->settings.format.type == FORMAT_LONG || data->settings.display.block_size)
-    ft_printf("total %u\n", cache.blocks_size);
+    ft_printf("total %s\n", get_block_size(cache.blocks_size, &data->settings, BLOCK_SIZE));
   if (!files->size) {
     files->destroy(files);
     return true;

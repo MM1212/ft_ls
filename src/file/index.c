@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 16:18:11 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 17:58:33 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/31 11:43:22 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -297,6 +297,7 @@ void file_cleanup(t_file* file) {
   free(file->symlink_path);
   free(file->owner);
   free(file->group);
+  free(file->scontext);
 }
 
 void file_debug_print(t_file* file) {

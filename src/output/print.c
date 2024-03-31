@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:42:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 18:08:56 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/31 13:47:15 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,12 @@ void file_print(t_file* file, t_ft_ls* data) {
   if (data->settings.display.inode)
     p += ft_sprintf(p, GET_REMAINING_SIZE, broken_link ? "%*c " : "%*u ", padding->inode, broken_link ? '?' : file->id);
   if (data->settings.display.block_size && file_stat(file))
-    p += ft_sprintf(p, GET_REMAINING_SIZE, broken_link ? "%*c " : "%*u ", padding->block_size, broken_link ? '?' : FS_BLOCK_SIZE(file->stat.st_blocks));
+    p += ft_sprintf(
+      p, GET_REMAINING_SIZE,
+      broken_link ? "%*c " : "%*s ",
+      padding->block_size,
+      broken_link ? "?" : get_block_size(FS_BLOCK_SIZE(file->stat.st_blocks), &data->settings, BLOCK_SIZE)
+    );
   if (!is_format_long && data->settings.display.scontext)
     p += ft_sprintf(p, GET_REMAINING_SIZE, "%*s ", padding->scontext, file->scontext ? file->scontext : "?");
 
@@ -71,7 +76,12 @@ void file_print(t_file* file, t_ft_ls* data) {
       p += ft_sprintf(p, GET_REMAINING_SIZE, " ");
     if (data->settings.display.scontext)
       p += ft_sprintf(p, GET_REMAINING_SIZE, "%-*s ", padding->scontext, file->scontext ? file->scontext : "?");
-    p += ft_sprintf(p, GET_REMAINING_SIZE, broken_link ? "%*c " : "%*d ", padding->size, broken_link ? '?' : file->stat.st_size);
+    p += ft_sprintf(
+      p, GET_REMAINING_SIZE,
+      broken_link ? "%*s " : "%*s ",
+      padding->size,
+      broken_link ? "?" : get_block_size(file->size, &data->settings, 1)
+    );
     // DATE
     if (broken_link)
       p += ft_sprintf(p, GET_REMAINING_SIZE, "%*c ", padding->date, '?');

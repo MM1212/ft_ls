@@ -26,11 +26,11 @@ CLI_INCLUDES = $(addprefix $(CLI_PATH)/,includes/)
 CLI_ARCH = $(addprefix $(CLI_BIN)/,libcli.a)
 
 INCLUDES = -Iincludes -I. -I$(LIBFT_INCLUDES) -I$(CLI_INCLUDES)
-LIBS =  -L$(CLI_BIN) -lcli -L$(LIBFT_BIN) -lft
+LIBS =  -L$(CLI_BIN) -lcli -L$(LIBFT_BIN) -lft -lm
 
 CC = clang
 
-DEBUG_ON = 0
+DEBUG = false
 
 ### COLORS ###
 
@@ -48,8 +48,6 @@ CFLAGS = \
 		-MT $@ -MMD -MP -MF $(DEP_DIR)/$*.d \
 		-Wall -Wextra -Werror \
 		-DVERSION="\"$$(cat VERSION)\"" \
-		-g -gdwarf-2 -g3 \
-		$(if $(DEBUG_ON),-DDEBUG,) \
 		-DCOLORS_RED="\"$(RED)\"" \
 		-DCOLORS_GREEN="\"$(GREEN)\"" \
 		-DCOLORS_YELLOW="\"$(YELLOW)\"" \
@@ -59,6 +57,11 @@ CFLAGS = \
 		-DCOLORS_ORANGE="\"$(ORANGE)\"" \
 		-DCOLORS_RESET="\"$(RESET)\""
 
+ifeq ($(DEBUG), true)
+	CFLAGS += -g -gdwarf-2 -g3 -DDEBUG #-fsanitize=address,undefined
+else
+	CFLAGS += -O3
+endif
 
 
 TAG = [$(CYAN)$(PROJECT_NAME)$(RESET)]

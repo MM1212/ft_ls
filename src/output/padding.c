@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 18:20:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 18:06:32 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/31 13:47:35 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,10 @@ static void init(t_l_fmt_padding* p) {
   ft_bzero(p, sizeof(t_l_fmt_padding));
 }
 
+static size_t ft_max(size_t a, size_t b) {
+  return a > b ? a : b;
+}
+
 void file_padding(t_file* file, t_l_fmt_padding* padding) {
   t_settings* settings = padding->settings;
   // shared between all formats
@@ -28,25 +32,25 @@ void file_padding(t_file* file, t_l_fmt_padding* padding) {
   inode_width = block_size_width = scontext_width = name_width = 0;
   if (settings->display.inode) {
     inode_width = broken_link ? 1 : ft_unbrlen_base(file->id, 10);
-    padding->inode = FT_MAX(padding->inode, inode_width);
+    padding->inode = ft_max(padding->inode, inode_width);
   }
   if (settings->display.block_size && file_stat(file)) {
-    block_size_width = broken_link ? 1 : ft_unbrlen_base(FS_BLOCK_SIZE(file->stat.st_blocks), 10);
-    padding->block_size = FT_MAX(padding->block_size, block_size_width);
+    block_size_width = broken_link ? 1 : ft_strlen(get_block_size(FS_BLOCK_SIZE(file->stat.st_blocks), settings, BLOCK_SIZE));
+    padding->block_size = ft_max(padding->block_size, block_size_width);
   }
   if (settings->display.scontext && file->type != FILE_SYMLINK) {
     scontext_width = file->scontext ? ft_strlen(file->scontext) : 1;
-    padding->scontext = FT_MAX(padding->scontext, scontext_width);
+    padding->scontext = ft_max(padding->scontext, scontext_width);
   }
   size_t mode_width = ft_strlen(file->mode);
-  padding->permissions = FT_MAX(padding->permissions, mode_width);
+  padding->permissions = ft_max(padding->permissions, mode_width);
   name_width = ft_strlen(file->name) + (get_indicator_style(file, settings) != '\0');
   file->name_width = name_width;
   file->inode_width = inode_width;
   file->bsize_width = block_size_width;
-  padding->name = FT_MAX(padding->name, name_width);
+  padding->name = ft_max(padding->name, name_width);
   size_t line_len = inode_width + block_size_width + scontext_width + name_width + settings->display.inode + settings->display.block_size + settings->display.scontext;
-  padding->grid_width = FT_MAX(padding->grid_width, line_len);
+  padding->grid_width = ft_max(padding->grid_width, line_len);
   padding->total_line_width += line_len;
   if (settings->format.type != FORMAT_LONG || !file_stat(file))
     return;
@@ -54,11 +58,11 @@ void file_padding(t_file* file, t_l_fmt_padding* padding) {
   bool compute_owner = settings->display.author || !settings->display.omit_owner;
 
   if (compute_owner)
-    padding->owner_name = FT_MAX(padding->owner_name, broken_link ? 1 : (file->owner && !show_ids) ? ft_strlen(file->owner) : ft_unbrlen_base(file->stat.st_uid, 10));
+    padding->owner_name = ft_max(padding->owner_name, broken_link ? 1 : (file->owner && !show_ids) ? ft_strlen(file->owner) : ft_unbrlen_base(file->stat.st_uid, 10));
   if (!settings->display.omit_group)
-    padding->group_name = FT_MAX(padding->group_name, broken_link ? 1 : (file->group && !show_ids) ? ft_strlen(file->group) : ft_unbrlen_base(file->stat.st_gid, 10));
-  padding->size = FT_MAX(padding->size, broken_link ? 1 : ft_unbrlen_base(file->stat.st_size, 10));
-  padding->link = FT_MAX(padding->link, broken_link ? 1 : ft_unbrlen_base(file->stat.st_nlink, 10));
+    padding->group_name = ft_max(padding->group_name, broken_link ? 1 : (file->group && !show_ids) ? ft_strlen(file->group) : ft_unbrlen_base(file->stat.st_gid, 10));
+  padding->size = ft_max(padding->size, broken_link ? 1 : ft_strlen(get_block_size(file->size, settings, 1)));
+  padding->link = ft_max(padding->link, broken_link ? 1 : ft_unbrlen_base(file->stat.st_nlink, 10));
   if (broken_link && !padding->date)
     padding->date = ft_strlen(date_get_verbose_date(file, settings));
 }

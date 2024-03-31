@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:26:12 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 17:25:45 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/31 15:51:28 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <file.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <block_size.h>
 
 #define DEFAULT_TERMINAL_WIDTH 80
 
@@ -25,7 +26,6 @@ typedef struct s_settings_sort t_settings_sort;
 typedef struct s_settings_format t_settings_format;
 
 typedef enum e_settings_color t_settings_color;
-typedef enum e_settings_block_size t_settings_block_size;
 typedef enum e_settings_time t_settings_time;
 typedef enum e_settings_sort_type t_settings_sort_type;
 typedef enum e_settings_format_type t_settings_format_type;
@@ -33,6 +33,7 @@ typedef enum e_settings_indicator_style t_settings_indicator_style;
 typedef enum e_settings_time_style t_settings_time_style;
 
 typedef int (*t_settings_sort_cmp)(t_file*, t_file*, t_settings*);
+
 struct s_settings_filter {
   bool all;
   bool almost_all;
@@ -48,26 +49,6 @@ struct s_settings_filter {
 
  */
 
-
-enum e_settings_block_size {
-  BLOCK_SIZE_BYTES,
-  BLOCK_SIZE_HUMAN_READABLE,
-  BLOCK_SIZE_SI,
-  BLOCK_SIZE_KILOBYTES,
-  BLOCK_SIZE_KIBIBYTES,
-  BLOCK_SIZE_MEGABYTES,
-  BLOCK_SIZE_MEBIBYTES,
-  BLOCK_SIZE_GIGABYTES,
-  BLOCK_SIZE_GIBIBYTES,
-  BLOCK_SIZE_TERABYTES,
-  BLOCK_SIZE_TEBIBYTES,
-  BLOCK_SIZE_PETABYTES,
-  BLOCK_SIZE_PEBIBYTES,
-  BLOCK_SIZE_EXABYTES,
-  BLOCK_SIZE_EXBIBYTES,
-  BLOCK_SIZE_ZETTABYTES,
-  BLOCK_SIZE_ZEBIBYTES,
-};
 
 enum e_settings_time {
   TIME_MODIFIED,
@@ -141,6 +122,9 @@ enum e_settings_time_style {
 struct s_settings_format {
   t_settings_format_type type;
   t_settings_block_size block_size;
+  const t_power* block_size_power;
+  bool block_size_one_letter;
+  ssize_t block_size_scalar;
   t_settings_time time;
   t_settings_indicator_style indicator_style;
   t_settings_time_style time_style;

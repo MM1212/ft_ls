@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 11:16:47 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/29 21:59:07 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/31 12:10:00 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <file.h>
 #include <sort.h>
 #include <sys/ioctl.h>
+#include <block_size.h>
 
 t_ft_ls* g_ls_data = NULL;
 
@@ -36,6 +37,7 @@ static bool init(t_ft_ls* data, char** env) {
   g_ls_data = data;
   if (!data->io || !data->colors || !data->dir_cache)
     return false;
+  block_size_compute();
   return true;
 }
 
@@ -54,6 +56,8 @@ static void manage_settings(t_ft_ls* data) {
   }
   if (!data->io->is_present("tabsize"))
     data->settings.tab_size = 8;
+  if (!data->settings.format.block_size_scalar)
+    data->settings.format.block_size_scalar = 1;
 }
 
 static void parse_entries(t_ft_ls* data, char** entries) {
@@ -117,7 +121,8 @@ int main(int ac, char** av, char** env) {
   if (!paths || !paths[0])
     paths = (char* []){ ".", NULL };
   manage_settings(&data);
-  // settings_print(&data.settings);
+  if (data.io->is_present("debug"))
+    settings_print(&data.settings);
   parse_entries(&data, paths);
   ft_ls_run(&data);
   ft_exit(&data, data.exit_status, NULL);

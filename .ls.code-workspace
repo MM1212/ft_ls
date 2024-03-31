@@ -64,7 +64,9 @@
       "stddef.h": "c",
       "grp.h": "c",
       "stdbool.h": "c",
-      "acct.h": "c"
+      "acct.h": "c",
+      "math.h": "c",
+      "utils.h": "c"
     },
     "files.exclude": {
       "**/*.o": false,

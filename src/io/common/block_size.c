@@ -6,62 +6,94 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 21:05:32 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:29:08 by martiper         ###   ########.fr       */
+/*   Updated: 2024/03/31 16:10:14 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "io.h"
 #include <ft_ls.h>
+#include <block_size.h>
 
 static const char* block_size_options[] = {
   "si",
   "human-readable",
-  "kB",
-  "k,K,KiB",
-  "MB",
-  "M,MiB",
-  "GB",
-  "G,GiB",
-  "TB",
-  "T,TiB",
-  "PB",
-  "P,PiB",
-  "EB",
-  "E,EiB",
+  "*kB",
+  "*k,*K,*KiB",
+  "*MB",
+  "*M,*MiB",
+  "*GB",
+  "*G,*GiB",
+  "*TB",
+  "*T,*TiB",
+  "*PB",
+  "*P,*PiB",
+  "*EB",
+  "*E,*EiB",
   NULL
 };
+static const char* block_size_first_set = "kKMGTPE";
 
-static void parse_block_size(t_cli_option* opt, t_ft_ls* data)
-{
-  char* block_size = opt->value;
-  if (ft_strcmp(block_size, "si") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_SI;
-  else if (ft_strcmp(block_size, "human-readable") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_HUMAN_READABLE;
-  else if (ft_strcmp(block_size, "kB") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_KILOBYTES;
-  else if (ft_strcmp(block_size, "k") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_KIBIBYTES;
-  else if (ft_strcmp(block_size, "MB") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_MEGABYTES;
-  else if (ft_strcmp(block_size, "M") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_MEBIBYTES;
-  else if (ft_strcmp(block_size, "GB") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_GIGABYTES;
-  else if (ft_strcmp(block_size, "G") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_GIBIBYTES;
-  else if (ft_strcmp(block_size, "TB") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_TERABYTES;
-  else if (ft_strcmp(block_size, "T") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_TEBIBYTES;
-  else if (ft_strcmp(block_size, "PB") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_PETABYTES;
-  else if (ft_strcmp(block_size, "P") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_PEBIBYTES;
-  else if (ft_strcmp(block_size, "EB") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_EXABYTES;
-  else if (ft_strcmp(block_size, "E") == 0)
-    data->settings.format.block_size = BLOCK_SIZE_EXBIBYTES;
+static bool validate(t_cli_option* opt, char* arg) {
+  char* unit = arg;
+  while (*unit && !ft_strchr(block_size_first_set, *unit))
+    unit++;
+  if (!*unit)
+    return false;
+  char store = *unit;
+  *unit = '\0';
+  size_t scalar = 0;
+  if (unit != arg && (!ft_isnbr(arg, false, false) || (scalar = ft_atol(arg)) == 0) ) {
+    *unit = store;
+    return false;
+  }
+  *unit = store;
+  const t_power* power = match_power(unit);
+  if (power == NULL)
+    return false;
+  opt->data = (void*)power;
+  t_ft_ls* main = opt->_handle->data;
+  main->settings.format.block_size_scalar = scalar;
+  main->settings.format.block_size_one_letter = ft_strlen(unit) == 1;
+  return true;
+}
+
+static void parse_block_size(t_cli_option* opt, t_ft_ls* data) {
+  data->settings.format.block_size_power = ((const t_power*)opt->data);
+  data->settings.format.block_size = data->settings.format.block_size_power->unit;
+}
+
+static void human_readable_cb(t_cli_option* opt, t_ft_ls* data) {
+  (void)opt;
+  data->settings.format.block_size = BLOCK_SIZE_HUMAN_READABLE;
+}
+
+static void si_cb(t_cli_option* opt, t_ft_ls* data) {
+  (void)opt;
+  data->settings.format.block_size = BLOCK_SIZE_SI;
+}
+
+static bool describe_human_readable(t_cli_handle* cli) {
+  t_cli_option_builder* opt = cli->new_option(\
+    "human-readable",
+    "with -l and -s, print sizes like 1K 234M 2G etc.",
+    true
+  );
+  if (!opt)
+    return false;
+  opt->add_switch('h')->set_cb((t_cli_option_cb)human_readable_cb);
+  return opt->end();
+}
+
+static bool describe_si(t_cli_handle* cli) {
+  t_cli_option_builder* opt = cli->new_option(\
+    "si",
+    "likewise, but use powers of 1000 not 1024",
+    true
+  );
+  if (!opt)
+    return false;
+  opt->set_cb((t_cli_option_cb)si_cb);
+  return opt->end();
 }
 
 bool io_describe_block_size(t_cli_handle* cli) {
@@ -75,8 +107,9 @@ bool io_describe_block_size(t_cli_handle* cli) {
   opt->add_flag("block-size")
     ->set_variable_hint("SIZE")
     ->set_type(CLI_OPTION_SELECT)
-    ->set_flags(CLI_OPTION_FLAG_REQUIRED)
+    ->set_flags(CLI_OPTION_FLAG_REQUIRED | CLI_OPTION_FLAG_FUZZY)
     ->set_cb((t_cli_option_cb)parse_block_size)
+    ->set_custom_validator((t_cli_option_validator)validate)
     ->set_description_footer("\
 The SIZE argument is an integer and optional unit (example: 10K is 10*1024). \
 Units are K,M,G,T,P,E,Z,Y (powers of 1024) or KB,MB,... (powers of 1000). \
@@ -89,5 +122,5 @@ Binary prefixes can be used, too: KiB=K, MiB=M, and so on. \
     ft_split_free(aliases);
   }
   opt->end();
-  return cli->is_valid();
+  return describe_human_readable(cli) && describe_si(cli);
 }
