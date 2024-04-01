@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 11:49:36 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/28 17:40:30 by martiper         ###   ########.fr       */
+/*   Updated: 2024/04/01 11:35:30 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,8 +134,15 @@ t_list* sort_files(t_list* files, t_settings* settings) {
 }
 
 t_vector* sort_files2(t_vector* files, t_settings* settings) {
-  if (settings->sort.type == SORT_NONE)
-    return files;
+  if (settings->sort.type == SORT_NONE) {
+    t_vector* sorted = vector_create3(sizeof(t_file*), files->size, NULL);
+    if (!sorted)
+      return NULL;
+    sorted->resize(sorted, files->size);
+    for (size_t i = 0; i < files->size; i++)
+      *(t_file**)sorted->at(sorted, i) = files->at(files, i);
+    return sorted;
+  }
 
   choose_sort_cmp(settings);
   t_vector* sorted = files->sort3(files, (t_vector_cmp2_f)sort2_wrapper, settings, NULL);
