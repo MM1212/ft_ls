@@ -6,7 +6,7 @@
 /*   By: martiper <martiper@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 23:08:28 by martiper          #+#    #+#             */
-/*   Updated: 2024/03/27 22:27:39 by martiper         ###   ########.fr       */
+/*   Updated: 2024/04/01 11:42:17 by martiper         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,12 @@
 
 static void cb(t_cli_option* opt, t_ft_ls* data) {
   (void)opt;
+  data->settings.filter.all = true;
+  data->settings.filter.almost_all = true;
   data->settings.sort.type = SORT_NONE;
   data->settings.format.block_size = BLOCK_SIZE_BYTES;
-  data->settings.format.type = FORMAT_LONG;
+  if (data->settings.format.type == FORMAT_LONG)
+    data->settings.format.type = FORMAT_NONE;
   data->settings.display.block_size = false;
   data->settings.display.color = SETTINGS_COLOR_NEVER;
 }
