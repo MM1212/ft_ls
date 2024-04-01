@@ -30,7 +30,7 @@ LIBS =  -L$(CLI_BIN) -lcli -L$(LIBFT_BIN) -lft -lm
 
 CC = clang
 
-DEBUG = false
+DEBUG = true
 
 ### COLORS ###
 
